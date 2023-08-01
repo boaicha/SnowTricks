@@ -169,18 +169,20 @@ class User implements UserInterface
         return $this;
     }
 
-    //public function getRoles(): array
-    //{
+    public function getRoles(): array
+    {
         // TODO: Implement getRoles() method.
-    //}
+        return 0;
+    }
 
-    //public function eraseCredentials()
-    //{
+    public function eraseCredentials()
+    {
         // TODO: Implement eraseCredentials() method.
-    //}
+    }
 
-    //public function getUserIdentifier(): string
-    //{
+    public function getUserIdentifier(): string
+    {
         // TODO: Implement getUserIdentifier() method.
-    //}
+        return 0;
+    }
 }
