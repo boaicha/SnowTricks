@@ -30,7 +30,7 @@ class Trick
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?category $idCategory = null;
+    private ?Category $idCategory = null;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
@@ -105,12 +105,12 @@ class Trick
         return $this;
     }
 
-    public function getIdCategory(): ?category
+    public function getIdCategory(): ?Category
     {
         return $this->idCategory;
     }
 
-    public function setIdCategory(?category $idCategory): static
+    public function setIdCategory(?Category $idCategory): static
     {
         $this->idCategory = $idCategory;
 

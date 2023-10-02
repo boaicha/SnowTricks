@@ -7,10 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,12 +25,12 @@ class User implements UserInterface
     private ?string $firstName = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $mail = null;
+    private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,nullable: true)]
     private ?string $profilPhoto = null;
 
     #[ORM\OneToMany(mappedBy: 'idUser', targetEntity: Trick::class)]
@@ -73,14 +74,14 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getMail(): ?string
+    public function getEmail(): ?string
     {
-        return $this->mail;
+        return $this->email;
     }
 
-    public function setMail(string $mail): static
+    public function setEmail(string $email): static
     {
-        $this->mail = $mail;
+        $this->email = $email;
 
         return $this;
     }
@@ -172,7 +173,7 @@ class User implements UserInterface
     public function getRoles(): array
     {
         // TODO: Implement getRoles() method.
-        return 0;
+        return [];
     }
 
     public function eraseCredentials()
@@ -185,4 +186,6 @@ class User implements UserInterface
         // TODO: Implement getUserIdentifier() method.
         return 0;
     }
+
+
 }
