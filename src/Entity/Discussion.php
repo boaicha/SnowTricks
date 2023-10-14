@@ -22,7 +22,7 @@ class Discussion
 
     #[ORM\ManyToOne(inversedBy: 'discussions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $iduser = null;
+    private ?User $iduser = null;
 
     #[ORM\ManyToOne(inversedBy: 'discussions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -57,12 +57,12 @@ class Discussion
         return $this;
     }
 
-    public function getIduser(): ?user
+    public function getIduser(): ?User
     {
         return $this->iduser;
     }
 
-    public function setIduser(?user $iduser): static
+    public function setIduser(?User $iduser): static
     {
         $this->iduser = $iduser;
 

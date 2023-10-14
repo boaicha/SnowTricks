@@ -36,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'idUser', targetEntity: Trick::class)]
     private Collection $tricks;
 
-    #[ORM\OneToMany(mappedBy: 'iduser', targetEntity: Discussion::class)]
+    #[ORM\OneToMany(mappedBy: 'idUser', targetEntity: Discussion::class)]
     private Collection $discussions;
 
     public function __construct()
@@ -152,7 +152,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->discussions->contains($discussion)) {
             $this->discussions->add($discussion);
-            $discussion->setIduser($this);
+            $discussion->setIdUser($this);
         }
 
         return $this;
@@ -162,8 +162,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->discussions->removeElement($discussion)) {
             // set the owning side to null (unless already changed)
-            if ($discussion->getIduser() === $this) {
-                $discussion->setIduser(null);
+            if ($discussion->getIdUser() === $this) {
+                $discussion->setIdUser(null);
             }
         }
 

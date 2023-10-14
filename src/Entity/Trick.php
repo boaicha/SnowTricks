@@ -34,7 +34,7 @@ class Trick
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $idUser = null;
+    private ?User $idUser = null;
 
     #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Image::class)]
     private Collection $images;
@@ -117,12 +117,12 @@ class Trick
         return $this;
     }
 
-    public function getIdUser(): ?user
+    public function getIdUser(): ?User
     {
         return $this->idUser;
     }
 
-    public function setIdUser(?user $idUser): static
+    public function setIdUser(?User $idUser): static
     {
         $this->idUser = $idUser;
 
