@@ -30,11 +30,11 @@ class Trick
     private ?DateTimeInterface $modificationDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Category $idCategory = null;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $idUser = null;
 
     #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Image::class)]
