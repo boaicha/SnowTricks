@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TrickRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,10 +24,10 @@ class Trick
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $creationDate = null;
+    private ?DateTimeInterface $creationDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $modificationDate = null;
+    private ?DateTimeInterface $modificationDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
@@ -81,24 +82,24 @@ class Trick
         return $this;
     }
 
-    public function getCreationDate(): ?\DateTimeInterface
+    public function getCreationDate(): ?DateTimeInterface
     {
         return $this->creationDate;
     }
 
-    public function setCreationDate(\DateTimeInterface $creationDate): static
+    public function setCreationDate(DateTimeInterface $creationDate): static
     {
         $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    public function getModificationDate(): ?\DateTimeInterface
+    public function getModificationDate(): ?DateTimeInterface
     {
         return $this->modificationDate;
     }
 
-    public function setModificationDate(?\DateTimeInterface $modificationDate): static
+    public function setModificationDate(?DateTimeInterface $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 

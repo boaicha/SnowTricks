@@ -14,7 +14,9 @@ class HomeController extends AbstractController
     {
         $tricks = $trickRepository->findAll();
         return $this->render('home/index.html.twig', [
-            'tricks'=> $tricks
+            'tricks' => $tricks
         ]);
     }
+
+
 }
