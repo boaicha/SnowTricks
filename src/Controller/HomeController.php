@@ -43,6 +43,7 @@ class HomeController extends AbstractController
         return $this->render('trick/new.html.twig', [
             'product' => $product,
             'form' => $form,
+
         ]);
     }
 
