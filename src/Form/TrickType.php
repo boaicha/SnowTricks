@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\Trick;
+use Doctrine\Entity;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,6 +17,9 @@ class TrickType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('idCategory', EntityType::class, [
+                'class' => Category::class
+            ])
             ->add('description')
         ;
     }

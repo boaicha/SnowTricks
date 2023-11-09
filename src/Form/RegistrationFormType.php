@@ -24,13 +24,6 @@ class RegistrationFormType extends AbstractType
                     'placeholder' => 'Entrez votre adresse mail'
                 ]
             ])
-            ->add('firstname', TextType::class, [
-                'label' => 'Nom d\'utilisateur',
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Entrez votre nom d\'utilisateur'
-                ]
-            ])
             ->add('name', TextType::class, [
                 'label' => 'Nom d\'utilisateur',
                 'attr' => [
