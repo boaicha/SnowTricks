@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\Trick;
 use App\Form\TrickFormType;
 use App\Form\TrickType;
@@ -21,10 +22,20 @@ class TrickController extends AbstractController
 
 
     #[Route('/', name: 'app_trick_index', methods: ['GET'])]
-    public function index(TrickRepository $trickRepository): Response
+    public function index(TrickRepository $trickRepository, ManagerRegistry $doctrine): Response
     {
+        $tricks = $trickRepository->findAll();
+        $images = null;
+        foreach ($tricks as $trick){
+            $manager = $doctrine->getManager();
+            $image = $manager->getRepository(Image::class);
+            $img = $image->findOneBy(['idTrick' => $trick->getId()]);
+            //images =
+    }
+
+
         return $this->render('trick/index.html.twig', [
-            'tricks' => $trickRepository->findAll(),
+            'tricks' => $tricks,
         ]);
     }
 
@@ -50,14 +61,18 @@ class TrickController extends AbstractController
     }
 
     #[Route('/{id}', name: 'trick_show')]
-    public function show(?Trick $trick): Response
+    public function show(?Trick $trick, ManagerRegistry $doctrine): Response
     {
         if (!$trick) {
             return $this->redirectToRoute('app_home');
         }
+        $manager = $doctrine->getManager();
+        $image = $manager->getRepository(Image::class);
+        $img = $image->findOneBy(['idTrick' => $trick->getId()]);
 
         $parameters = [
-            'trick' => $trick
+            'trick' => $trick,
+            'image' => $img->getImage()
         ];
 
 
