@@ -37,7 +37,7 @@ class Trick
     #[ORM\JoinColumn(nullable: true)]
     private ?User $idUser = null;
 
-    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Image::class)]
+    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Image::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $images;
 
     #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Video::class)]
@@ -144,6 +144,11 @@ class Trick
             $this->images->add($image);
             $image->setIdTrick($this);
         }
+//        if (!$this->images->contains($image)) {
+//            $this->images[] = $image;
+//            $image->setIdTrick($this);
+//        }
+//
 
         return $this;
     }
