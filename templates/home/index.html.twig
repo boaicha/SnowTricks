@@ -53,8 +53,9 @@
                                                 <div class="small">
                                                     <div class="fw-bold">Kelly Rowan</div>
                                                     <div class="text-muted">{{ trick.creationDate|date('Y-m-d') }}&middot; 6 min read</div>
-                                                    <a href="{{ path('trick_show', {'id': trick.id}) }}">Afficher le trick</a>
-                                                    <a href="{{ path('app_trick_delete', {'id': trick.id}) }}" onclick="ask()"><i class="bi bi-trash" style="margin-left: 90%"></i></a>
+                                                    <a href="{{ path('trick_show', {'slug': trick.slug}) }}">Afficher le trick</a>
+                                                    <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}">Modifier le trick</a>
+                                                    <a href="{{ path('app_trick_delete', {'slug': trick.slug}) }}" onclick="ask()"><i class="bi bi-trash" style="margin-left: 90%"></i></a>
                                                 </div>
                                             </div>
                                         </div>

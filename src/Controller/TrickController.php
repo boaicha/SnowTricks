@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Discussion;
 use App\Entity\Image;
 use App\Entity\Trick;
+use App\Form\DiscussionType;
 use App\Form\TrickFormType;
 use App\Form\TrickType;
 use App\Repository\TrickRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,23 +24,7 @@ class TrickController extends AbstractController
 {
 
 
-    #[Route('/', name: 'app_trick_index', methods: ['GET'])]
-    public function index(TrickRepository $trickRepository, ManagerRegistry $doctrine): Response
-    {
-        $tricks = $trickRepository->findAll();
-        $images = null;
-        foreach ($tricks as $trick){
-            $manager = $doctrine->getManager();
-            $image = $manager->getRepository(Image::class);
-            $img = $image->findOneBy(['idTrick' => $trick->getId()]);
-            //images =
-    }
 
-
-        return $this->render('trick/index.html.twig', [
-            'tricks' => $tricks,
-        ]);
-    }
 
     #[Route('/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager,UserInterface $user): Response
@@ -52,7 +39,7 @@ class TrickController extends AbstractController
             $entityManager->persist($trick);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_trick_index', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
         return $this->render('trick/new.html.twig', [
             'trick' => $trick,
@@ -60,8 +47,11 @@ class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'trick_show')]
-    public function show(?Trick $trick, ManagerRegistry $doctrine): Response
+    /**
+     * @throws \Exception
+     */
+    #[Route('/{slug}', name: 'trick_show')]
+    public function show(?Trick $trick, ManagerRegistry $doctrine, EntityManagerInterface $entityManager,Request $request, ?Discussion $discussions): Response
     {
         if (!$trick) {
             return $this->redirectToRoute('app_home');
@@ -70,35 +60,58 @@ class TrickController extends AbstractController
         $image = $manager->getRepository(Image::class);
         $img = $image->findOneBy(['idTrick' => $trick->getId()]);
 
+        $discussion = new Discussion();
+
+        //Crée le formulaire
+        $formDiscussion = $this->createForm(DiscussionType::class, $discussion);
+        $formDiscussion->handleRequest($request);
+        //$repoDiscussion = $manager->getRepository(Image::class);
+        //$discussion = null;
+        if ($formDiscussion->isSubmitted() && $formDiscussion->isValid()) {
+            $discussion->setIduser($this->getUser());
+            $date = new DateTime('@'.strtotime('now'));
+            $discussion->setCreationDate($date);
+            $discussion->setIdTrick($trick);
+            $entityManager->persist($discussion);
+            $entityManager->flush();
+
+
+            //$discussion = $repoDiscussion->findBy(['idTrick' => $trick->getId()]);
+            //return $this->redirectToRoute('app_home', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
+        }
+
         $parameters = [
             'trick' => $trick,
-            'image' => $img->getImage()
+            'image' => $img->getImage(),
+            'discussion' => $discussions,
+            'discussionForm' => $formDiscussion->createView()
         ];
 
 
         return $this->render('home/trick.html.twig', $parameters);
     }
 
-    #[Route('/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
+    #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(TrickType::class, $trick);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $trick->setIdUser($this->getUser());
+            $entityManager->persist($trick);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('trick/edit.html.twig', [
             'trick' => $trick,
-            'form' => $form,
+            'trickForm' => $form
         ]);
     }
 
 
-    #[Route('/{id}/delete', name: 'app_trick_delete')]
+    #[Route('/{slug}/delete', name: 'app_trick_delete')]
     public function deleteTrick(Trick $trick = null, ManagerRegistry $doctrine): RedirectResponse
     {
         //Recuperer la personne.
@@ -131,4 +144,22 @@ class TrickController extends AbstractController
         ]);
 
     }
+
+    #[Route('/trick/{slug}', name: 'app_discussion')]
+    public function discussionTrick(): Response
+    {
+        //Crée un "nouveau trick"
+        $discussion = new Discussion();
+
+        //Crée le formulaire
+        $form = $this->createForm(DiscussionType::class, $discussion);
+
+        return $this->render('trick/discussion.html.twig', [
+            'discussionForm' => $form->createView()
+        ]);
+
+    }
+
+
+
 }

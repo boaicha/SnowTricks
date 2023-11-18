@@ -36,7 +36,7 @@ class HomeController extends AbstractController
         $form = $this->createForm(TrickType::class, $product);
         $form->handleRequest($request);
         $date = new DateTime('@'.strtotime('now'));
-        $img = new Image();
+
         if ($form->isSubmitted() && $form->isValid()) {
             // recuperer les images
             $images =$form->get('images')->getData();
@@ -44,7 +44,7 @@ class HomeController extends AbstractController
             foreach($images as $image){
                 // définir le dossier de destination
                 $folder = 'tricks';
-
+                $img = new Image();
                 // On appelle le service d'ajout
                 $fichier = $pictureService->add($image, $folder, 300, 300);
 
