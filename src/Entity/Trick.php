@@ -51,8 +51,8 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Video::class)]
     private Collection $videos;
 
-    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Discussion::class, orphanRemoval: true, cascade: ['persist'])]
-    private Collection $discussions;
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Discussion::class, orphanRemoval: true, cascade: ['persist'])]
+    private $discussions;
 
 
     public function __construct()

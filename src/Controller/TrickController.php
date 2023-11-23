@@ -71,7 +71,8 @@ class TrickController extends AbstractController
             $discussion->setIduser($this->getUser());
             $date = new DateTime('@'.strtotime('now'));
             $discussion->setCreationDate($date);
-            $discussion->setIdTrick($trick);
+            $discussions->setTrick($trick);
+            //$discussion->setIdTrick($trick);
             $entityManager->persist($discussion);
             $entityManager->flush();
 
@@ -79,11 +80,12 @@ class TrickController extends AbstractController
             //$discussion = $repoDiscussion->findBy(['idTrick' => $trick->getId()]);
             //return $this->redirectToRoute('app_home', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
-
+        //dd($trick->getDiscussions()->get(0)->getContent());
+        //dd($img);
         $parameters = [
             'trick' => $trick,
             'image' => $img->getImage(),
-            'discussion' => $discussions,
+            //'discussion' => $trick->getDiscussions(),
             'discussionForm' => $formDiscussion->createView()
         ];
 
