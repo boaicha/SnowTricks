@@ -52,7 +52,7 @@ class Trick
     private Collection $videos;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Discussion::class, orphanRemoval: true, cascade: ['persist'])]
-    private $discussions;
+    private Collection $discussions;
 
 
     public function __construct()

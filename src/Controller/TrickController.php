@@ -68,11 +68,15 @@ class TrickController extends AbstractController
         //$repoDiscussion = $manager->getRepository(Image::class);
         //$discussion = null;
         if ($formDiscussion->isSubmitted() && $formDiscussion->isValid()) {
+            $discussions =$formDiscussion->get('content')->getData();
             $discussion->setIduser($this->getUser());
             $date = new DateTime('@'.strtotime('now'));
             $discussion->setCreationDate($date);
-            $discussions->setTrick($trick);
-            //$discussion->setIdTrick($trick);
+            //$discussions->setTrick($trick);
+            //dd($discussions);
+
+
+            $discussion->setTrick($trick);
             $entityManager->persist($discussion);
             $entityManager->flush();
 
