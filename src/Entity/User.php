@@ -8,9 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['name'], message: 'L\'utilisateur existe déjà.')]
+#[UniqueEntity(fields: ['email'], message: 'L\'utilisateur existe déjà.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -29,6 +32,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255,nullable: true)]
     private ?string $profilPhoto = null;
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = ['ROLE_USER'];
+
+    #[ORM\Column(type: 'boolean')]
+    private $isVerified = false;
 
     #[ORM\OneToMany(mappedBy: 'idUser', targetEntity: Trick::class)]
     private Collection $tricks;
@@ -158,8 +167,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        // TODO: Implement getRoles() method.
-        return [];
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function eraseCredentials()
@@ -172,10 +184,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // TODO: Implement getUserIdentifier() method.
         return 0;
     }
-    public function __toString()
-    {
-        return $this->name . '' .$this->id;
 
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function isIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function __toString(): string {
+        return $this->getTricks();
     }
 
 

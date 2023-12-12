@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Discussion;
 use App\Entity\Image;
 use App\Entity\Trick;
+use App\Entity\Video;
 use App\Form\DiscussionType;
 use App\Form\TrickFormType;
 use App\Form\TrickType;
@@ -39,8 +40,11 @@ class TrickController extends AbstractController
             $entityManager->persist($trick);
             $entityManager->flush();
 
+
+
             return $this->redirectToRoute('app_trick_index', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
+
         return $this->render('trick/new.html.twig', [
             'trick' => $trick,
             'form' => $form
@@ -84,13 +88,18 @@ class TrickController extends AbstractController
             //$discussion = $repoDiscussion->findBy(['idTrick' => $trick->getId()]);
             //return $this->redirectToRoute('app_home', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
+        $videos = $entityManager->getRepository(Video::class)->findBy(['idTrick' => $trick->getId()]);
         //dd($trick->getDiscussions()->get(0)->getContent());
         //dd($img);
+        //dd($trick->getVideos()->get(0)->getVideo());
+        //dd($videos[0]->getVideo());
         $parameters = [
             'trick' => $trick,
-            'image' => $img->getImage(),
+            'image' => $img,
+            'videos' => $videos,
             //'discussion' => $trick->getDiscussions(),
-            'discussionForm' => $formDiscussion->createView()
+            'discussionForm' => $formDiscussion->createView(),
+            'user' => $this->getUser()
         ];
 
 
