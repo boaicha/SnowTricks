@@ -52,14 +52,25 @@
                         </figure>
 
                             {% if videos != null %}
-                                <iframe src="{{ videos[0].getVideo }}" allowfullscreen></iframe>
+                                {% for video in videos %}
+                                <iframe src="{{ video.getVideo }}" allowfullscreen></iframe>
+                                {% endfor %}
+                                {% endif %}
+                            {% if images != null %}
+                            {% for img in images %}
+                            <figure class="mb-4"><img class="img-fluid rounded"
+                                                      src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/>
+                                {% endfor %}
                                 {% endif %}
 
                         <!-- Post content-->
-                        <section class="mb-5">
-                            <p>{{ trick.description }}</p>
-                        </section>
+                            <section class="mb-5">
+                                <p>{{ trick.description }}</p>
+                            </section>
+                            </figure>
+                        </figure>
                     </article>
+
                     <!-- Comments section-->
                     <section>
                         <div class="card bg-light">
@@ -87,7 +98,10 @@
                             <!-- Single comment-->
 
                         </div>
+                    </section>
                 </div>
+            </div>
+        </div>
     </section>
                 </div>
             </div>

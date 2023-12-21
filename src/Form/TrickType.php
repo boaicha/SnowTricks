@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\Trick;
 use App\Entity\Video;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\Entity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -24,9 +25,13 @@ class TrickType extends AbstractType
                 'class' => Category::class
             ])
             ->add('description')
-            ->add('videos', TextType::class, [
-                'mapped' => false,
-                'required' => false
+            ->add('videos', CollectionType::class, [
+                'entry_type' => VideoType::class, // Utilisez VideoType pour les vidéos
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'required' => false,
+                // Autres options pour le champ vidéos si nécessaire
             ])
             ->add('images', FileType::class, [
                 'multiple' => true,
