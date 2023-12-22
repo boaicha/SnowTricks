@@ -147,7 +147,7 @@ class TrickController extends AbstractController
                     $video->setVideo($videos);
                     $trick->addVideo($video);
                 }
-
+                dd($trick);
                 $entityManager->persist($trick);
                 $entityManager->flush();
 
