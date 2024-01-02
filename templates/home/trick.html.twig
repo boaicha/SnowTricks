@@ -4,20 +4,86 @@
 
 {% block body %}
 
+    <style>
+        #main {
+            width: 980px;
+
+            height: 400px;
+
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+
+        #main div iframe {
+            width: 200px;
+            height: 150px; /* Adjust the height as needed */
+            margin: 10px; /* Add margin for spacing */
+        }
+
+        .agrandir {
+            width: 970px;
+            height: 600px;
+        }
+
+
+        body {
+            margin-bottom: 100px;
+            z-index: 100;/* Espace pour empêcher le contenu de chevaucher la section fixe en bas */
+        }
+        .comments-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-width: 800px; /* Largeur maximale de la section */
+            padding: 20px;
+            background-color: #fff;
+            z-index: 9999; /* Ajustez la valeur z-index si nécessaire pour empêcher le chevauchement avec d'autres éléments */
+        }
+
+    /*    TEST */
+        #main {
+            width: 92%; /* Set the main content width to occupy 80% of the page */
+            margin: auto; /* Center the main content horizontally */
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* Adjusted column widths for responsiveness */
+        .col-lg-9 {
+            flex: 0 0 70%; /* Set the width to occupy 70% of the available space */
+            max-width: 70%;
+            margin-right: 5%; /* Add space between columns */
+        }
+
+        .col-lg-3 {
+            flex: 0 0 25%; /* Set the width for the sidebar content */
+            max-width: 25%;
+        }
+
+
+        #main div img {
+            width: 200px;
+            height: 150px; /* Adjust the height as needed */
+            margin: 5px; /* Add margin for spacing */
+        }
+    </style>
+
     <section class="py-5">
         <div class="container px-5 my-5">
             <div class="row gx-5">
-                <div class="col-lg-3">
-                    <div class="d-flex align-items-center mt-lg-5 mb-4">
-                        <img class="img-fluid rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
-                             alt="..."/>
-                        <div class="ms-3">
-                            <div class="fw-bold">Valerie Luna</div>
-                            <div class="text-muted">News, Business</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-9">
+{#                <div class="col-lg-3">#}
+{#                    <div class="d-flex align-items-center mt-lg-5 mb-4">#}
+{#                        <img class="img-fluid rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"#}
+{#                             alt="..."/>#}
+{#                        <div class="ms-3">#}
+{#                            <div class="fw-bold">Valerie Luna</div>#}
+{#                            <div class="text-muted">News, Business</div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+                <div class="">
                     <!-- Post content-->
                     <article>
                         <!-- Post header-->
@@ -36,14 +102,14 @@
                                 </div>
                             {% endif %}
                             <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2">{{ trick.creationdate|date('d-M-Y') }}</div>
+
                             <!-- Post categories-->
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
+
                         </header>
                         <!-- Preview image figure-->
+
                         {% if image != null %}
-                        <figure class="mb-4"><img class="img-fluid rounded"
+                        <figure class="mb-4"><img class="img-fluid rounded agrandir"
                                                   src="{{ asset('assets/uploads/tricks/') ~ image.getImage() }}" alt="..."/>
                             {% else %}
                             <figure class="mb-4"><img class="img-fluid rounded"
@@ -51,27 +117,36 @@
                             {% endif %}
                         </figure>
 
+                            <div id="main">
+
                             {% if videos != null %}
                                 {% for video in videos %}
-                                <iframe src="{{ video.getVideo }}" allowfullscreen></iframe>
+                                <div><iframe src="{{ video.getVideo }}" allowfullscreen></iframe></div>
                                 {% endfor %}
                                 {% endif %}
                             {% if images != null %}
                             {% for img in images %}
-                            <figure class="mb-4"><img class="img-fluid rounded"
-                                                      src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/>
+                            <div><img class="img-fluid rounded"
+                                                      src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/></div>
                                 {% endfor %}
                                 {% endif %}
 
+                            </div>
                         <!-- Post content-->
                             <section class="mb-5">
                                 <p>{{ trick.description }}</p>
                             </section>
                             </figure>
-                        </figure>
                     </article>
 
+                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.creationdate|date('d-M-Y') }}</a>
+                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.modificationDate |date('d-M-Y') }}</a>
+                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.idCategory }}</a>
+                <hr>
+
                     <!-- Comments section-->
+
+
                     <section>
                         <div class="card bg-light">
                             <div class="card-body">
@@ -79,7 +154,22 @@
                                 {% if user != null %}
                                 {{ include('trick/discussion.html.twig', {'button_label': 'Valider'}) }}
                                 {% endif %}
+                            </div>
+                            </div>
+                                <hr>
+                        <div class="card bg-light">
+                            <div class="card-body">
                                 <!-- Comment with nested comments-->
+                                <!-- Ajoutez un conteneur pour les commentaires -->
+                                <div id="comment-section">
+                                    <!-- Vos commentaires existants -->
+                                    {% for discussion in trick.discussions %}
+                                        <!-- Afficher les commentaires existants -->
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Bouton "Load More" -->
+                                <button id="load-more-btn" class="btn btn-primary">Load More</button>
 
                                 {% for discussion in trick.discussions %}
                                     <div class="d-flex mb-4">
@@ -95,10 +185,12 @@
                                     </div>
                                 {% endfor %}
                             </div>
+
                             <!-- Single comment-->
 
                         </div>
                     </section>
+                    <hr>
                 </div>
             </div>
         </div>

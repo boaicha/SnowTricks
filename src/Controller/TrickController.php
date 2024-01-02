@@ -15,6 +15,8 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use phpDocumentor\Reflection\Types\Boolean;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +29,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Route('/trick')]
 class TrickController extends AbstractController
 {
+
 
     /**
      * @throws Exception
@@ -110,24 +113,35 @@ class TrickController extends AbstractController
     }
 
 
-    #[Route('/trick/add', name: 'app_add')]
-    public function add(Request $request, EntityManagerInterface $entityManager, PictureService $pictureService, SessionInterface $session): Response
+    #[Route('/trick/add', name: 'app_add', methods: ['GET', 'POST'])]
+    public function add(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, PictureService $pictureService, SessionInterface $session): Response
     {
         $trick = new Trick();
         $form = $this->createForm(TrickType::class, $trick);
         $form->handleRequest($request);
         $date = new DateTime('@'.strtotime('now'));
 
+        $manager = $doctrine->getManager();
+        $tricks = $manager->getRepository(Trick::class);
+        $trickSimilairetrouve = $tricks->findOneBy(['slug' => $trick->getSlug()]);
+        if($trickSimilairetrouve != null){
+            $session->getFlashBag()->add('danger', 'Le nom de la figure saisie est déjà existant');
+            return $this->render('trick/new.html.twig', [
+                'trick' => $trick,
+                'form' => $form->createView(),
+            ]);
+        }
         try {
             // perform some task
-            if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($form->isSubmitted()) {
                 $images = $form->get('images')->getData();
                 $videos = $form->get('videos')->getData();
 
                 $trick->setCreationDate($date);
                 $trick->setIdUser($this->getUser());
-
                 foreach ($images as $image) {
+
                     $folder = 'tricks';
                     $img = new Image();
                     $file = $pictureService->add($image, $folder, 300, 300);
@@ -136,7 +150,8 @@ class TrickController extends AbstractController
                     $trick->addImage($img);
                 }
 
-                if (is_array($videos) || $videos instanceof \Traversable) {
+
+                if (is_array($videos)) {
                     foreach ($videos as $videoData) {
                         $video = new Video();
                         $video->setVideo($videoData->getVideo());
@@ -147,15 +162,21 @@ class TrickController extends AbstractController
                     $video->setVideo($videos);
                     $trick->addVideo($video);
                 }
-                dd($trick);
-                $entityManager->persist($trick);
-                $entityManager->flush();
+                //dd($trick);
+
+                    $entityManager->persist($trick);
+                    $entityManager->flush();
 
                 return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+
             }
-        } catch (Exception $ex) {
-            $session->getFlashBag()->add('danger', 'Le nom de la figure saisie est déjà existant');
+
+        } catch (\Exception $e) {
+            // Log or display the specific error message for debugging purposes
+            // Log the error: $this->logger->error($e->getMessage());
+            dd($e);
         }
+
 
         return $this->render('trick/new.html.twig', [
             'trick' => $trick,
