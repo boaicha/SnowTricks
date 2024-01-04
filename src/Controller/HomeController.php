@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Image;
 use App\Entity\Trick;
 use App\Entity\Video;
+use App\Repository\DiscussionRepository;
 use App\Repository\TrickRepository;
 use App\Services\PictureService;
 use DateTime;
@@ -23,7 +24,7 @@ class HomeController extends AbstractController
     #[Route('/home', name: 'app_home')]
     public function index(TrickRepository $trickRepository): Response
     {
-        $tricks = $trickRepository->findby([],['creationDate' => 'DESC'], 6, 0);
+        $tricks = $trickRepository->findby([], ['creationDate' => 'DESC'], 6, 0);
 
         return $this->render('home/index.html.twig', [
             'tricks' => $tricks,
@@ -49,7 +50,6 @@ class HomeController extends AbstractController
             ];
 
 
-
             // Ajoutez des images si nécessaire
             $images = [];
             foreach ($trick->getImages() as $image) {
@@ -70,9 +70,6 @@ class HomeController extends AbstractController
 
         return new JsonResponse($jsonData);
     }
-
-
-
 
 
 }

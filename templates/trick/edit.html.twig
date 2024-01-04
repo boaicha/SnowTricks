@@ -1,13 +1,147 @@
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block title %}Edit Trick{% endblock %}#}
+
+{#{% block body %}#}
+{#    <h1>Modification du trick</h1>#}
+
+
+
+{#    <a href="{{ path('app_home') }}">back to list</a>#}
+{#    {{ include('trick/_form.html.twig', {'button_label': 'Update'}) }}#}
+{#    {{ include('trick/_delete_form.html.twig') }}#}
+{#{% endblock %}#}
+
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Trick{% endblock %}
+{% block title %}Modification{% endblock %}
+
 
 {% block body %}
-    <h1>Modification du trick</h1>
+    <html lang="en">
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <style>
+        #main {
+            width: 980px;
+
+            height: 400px;
+
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+
+        #main div iframe {
+            width: 200px;
+            height: 150px; /* Adjust the height as needed */
+            margin: 10px; /* Add margin for spacing */
+        }
+
+        .agrandir {
+            width: 970px;
+            height: 600px;
+        }
+
+
+        body {
+            margin-bottom: 100px;
+            z-index: 100;/* Espace pour empêcher le contenu de chevaucher la section fixe en bas */
+        }
+        .comments-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-width: 800px; /* Largeur maximale de la section */
+            padding: 20px;
+            background-color: #fff;
+            z-index: 9999; /* Ajustez la valeur z-index si nécessaire pour empêcher le chevauchement avec d'autres éléments */
+        }
+
+        /*    TEST */
+        #main {
+            width: 92%; /* Set the main content width to occupy 80% of the page */
+            margin: auto; /* Center the main content horizontally */
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* Adjusted column widths for responsiveness */
+        .col-lg-9 {
+            flex: 0 0 70%; /* Set the width to occupy 70% of the available space */
+            max-width: 70%;
+            margin-right: 5%; /* Add space between columns */
+        }
+
+        .col-lg-3 {
+            flex: 0 0 25%; /* Set the width for the sidebar content */
+            max-width: 25%;
+        }
+
+
+        #main div img {
+            width: 200px;
+            height: 150px; /* Adjust the height as needed */
+            margin: 5px; /* Add margin for spacing */
+        }
+    </style>
+
+    <section class="py-5">
+        <div class="container px-5 my-5">
+            <div class="row gx-5">
+                <div class="">
+                    {{ form_start(trickForm) }}
+                    <!-- Post content-->
+                    <article>
+
+                        <!-- Preview image figure-->
+
+                        {% if trick.images.get(0) != null %}
+                        <figure class="mb-4"><img class="img-fluid rounded agrandir"
+                                                  src="{{ asset('assets/uploads/tricks/') ~trick.images.get(0).getImage() }}" alt="..."/>
+                            {% else %}
+                            <figure class="mb-4"><img class="img-fluid rounded"
+                                                      src="{{ asset('assets/uploads/tricks/defaut.jpg')}}" alt="..."/>
+                                {% endif %}
+                            </figure>
+
+                            <div id="main">
+
+                                {% if trick.videos != null %}
+                                    {% for video in trick.videos %}
+                                        <div><iframe src="{{ video.getVideo }}" allowfullscreen></iframe></div>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if trick.images != null %}
+                                    {% for img in trick.images %}
+                                        <div><img class="img-fluid rounded"
+                                                  src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/></div>
+                                    {% endfor %}
+                                {% endif %}
+
+                            </div>
+                            <!-- Post content-->
+                            <section class="mb-5">
+                                <p>{{ form_row(trickForm.name) }}</p>
+                                <p>{{ form_row(trickForm.description) }}</p>
+                            </section>
+                        </figure>
+                    </article>
+
+                    {{ form_row(trickForm.idCategory) }}
+
+                </div>
+                <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+                {{ form_end(trickForm) }}
+            </div>
+        </div>
+    </section>
 
 
 
-    <a href="{{ path('app_home') }}">back to list</a>
-    {{ include('trick/_form.html.twig', {'button_label': 'Update'}) }}
-    {{ include('trick/_delete_form.html.twig') }}
+
+    </html>
 {% endblock %}

@@ -2,8 +2,12 @@
 
 {% block title %}Hello HomeController!{% endblock %}
 
-{% block body %}
 
+{% block body %}
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
     <style>
         #main {
             width: 980px;
@@ -169,10 +173,10 @@
                                 </div>
 
                                 <!-- Bouton "Load More" -->
-                                <button id="load-more-btn" class="btn btn-primary">Load More</button>
 
-                                {% for discussion in trick.discussions %}
-                                    <div class="d-flex mb-4">
+                                <div id="discussions"></div>
+                                {% for discussion in limitedDiscussions %}
+                                    <div class="d-flex mb-4 discussion">
                                         <!-- Parent comment-->
                                         <div class="flex-shrink-0"><img class="rounded-circle"
                                                                         src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
@@ -185,6 +189,9 @@
                                     </div>
                                 {% endfor %}
                             </div>
+                            <section class="flex justify-center pt-5">
+                                <button type="button" class="btn btn-primary" id="load-more-btn">Voir plus</button>
+                            </section>
 
                             <!-- Single comment-->
 
@@ -195,9 +202,58 @@
             </div>
         </div>
     </section>
-                </div>
-            </div>
-        </div>
-    </section>
 
+
+{% block javascripts %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            const trickContainer = document.getElementById('discussions');
+
+            let offset = {{ limitedDiscussions|length }}; // Initialize the offset with the number of discussions already displayed
+
+            loadMoreBtn.addEventListener('click', function() {
+                fetch(`/trick/loadMoreDiscussions?offset=${offset}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+
+                        // Append new discussions
+                        data.forEach(item => {
+                            const discussion = item; // Access the details of the discussion in 'item'
+
+                            console.log(discussion);
+                            const discussionDiv = document.createElement('div');
+                            discussionDiv.classList.add('d-flex', 'mb-4', 'discussion');
+
+                            discussionDiv.innerHTML = `
+                            <div class="flex-shrink-0">
+                                <img class="rounded-circle"
+                                    src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
+                                    alt="...">
+                            </div>
+                            <div class="ms-3">
+                                <div class="fw-bold">${discussion.idUser}</div>
+                                ${discussion.content}
+                            </div>
+                        `;
+                            trickContainer.appendChild(discussionDiv);
+                        });
+
+                        offset += data.length; // Update the offset
+                        console.log(offset);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+
+            });
+        });
+    </script>
+
+
+{% endblock javascripts %}
+
+</html>
 {% endblock %}

@@ -12,12 +12,14 @@ use App\Form\TrickType;
 use App\Repository\TrickRepository;
 use App\Services\PictureService;
 use DateTime;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +65,10 @@ class TrickController extends AbstractController
         $videos = $entityManager->getRepository(Video::class)->findBy(['idTrick' => $trick->getId()]);
         $images = $entityManager->getRepository(Image::class)->findBy(['idTrick' => $trick->getId()]);
 
+        $discussions = $trick->getDiscussions();
+        $criteria = Criteria::create()->setMaxResults(4);
+        $limitedDiscussions = $discussions->matching($criteria);
+
         $parameters = [
             'trick' => $trick,
             'image' => $img,
@@ -70,7 +76,8 @@ class TrickController extends AbstractController
             'images' => $images,
             //'discussion' => $trick->getDiscussions(),
             'discussionForm' => $formDiscussion->createView(),
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
+            'limitedDiscussions' => $limitedDiscussions
         ];
 
 
@@ -82,6 +89,11 @@ class TrickController extends AbstractController
     {
         $form = $this->createForm(TrickType::class, $trick);
         $form->handleRequest($request);
+
+        $discussions = $trick->getDiscussions();
+        $criteria = Criteria::create()->setMaxResults(4);
+        $limitedDiscussions = $discussions->matching($criteria);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setIdUser($this->getUser());
             $entityManager->persist($trick);
@@ -92,10 +104,38 @@ class TrickController extends AbstractController
 
         return $this->render('trick/edit.html.twig', [
             'trick' => $trick,
-            'trickForm' => $form
+            'trickForm' => $form,
+            'limitedDiscussions' => $limitedDiscussions
         ]);
     }
 
+    #[Route('/loadMoreDiscussions', name: 'loadMoreDiscussions', methods: ['GET'])]
+    public function loadDiscussions(Request $request, Trick $trick): JsonResponse
+    {
+        $offset = $request->query->getInt('offset', 0);
+        $limit = 4;
+
+        $discussions = $trick->getDiscussions();
+
+        if ($discussions->count() > 0) {
+            $slicedDiscussions = $discussions->slice($offset, $limit);
+
+            $jsonData = [];
+            foreach ($slicedDiscussions as $discussion) {
+                $discussionData = [
+                    'id' => $discussion->getId(),
+                    'content' => $discussion->getContent(),
+                    'idUser'=> $discussion->getIduser()->getId(),
+                    'creationDate'=> $discussion->getCreationDate()->format('Y-m-d H:i:s'),
+                ];
+                $jsonData[] = $discussionData;
+            }
+
+            return new JsonResponse($jsonData);
+        }
+
+        return new JsonResponse([]);
+    }
 
     #[Route('/{slug}/delete', name: 'app_trick_delete')]
     public function deleteTrick(Trick $trick = null, ManagerRegistry $doctrine): RedirectResponse
@@ -197,16 +237,6 @@ class TrickController extends AbstractController
             'discussionForm' => $form->createView()
         ]);
 
-    }
-    #[Route('/loadmore/{offset}', name: 'loadmore', methods: ['GET', 'POST'])]
-    public function loadMore(TrickRepository $trickRepository, $offset): Response
-    {
-        $tricks = $trickRepository->findby([],['creationDate' => 'DESC'], 6, $offset);
-
-        return $this->render('home/index.html.twig', [
-            'tricks' => $tricks,
-            'user' => $this->getUser()
-        ]);
     }
 
 
