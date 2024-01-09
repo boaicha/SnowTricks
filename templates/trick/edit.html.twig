@@ -87,6 +87,18 @@
             height: 150px; /* Adjust the height as needed */
             margin: 5px; /* Add margin for spacing */
         }
+
+        .displayImage {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .delete-button {
+            margin-top: 8px; /* Adjust this value according to your layout */
+            /* Add any additional styling for the delete button */
+        }
     </style>
 
     <section class="py-5">
@@ -117,8 +129,21 @@
                                 {% endif %}
                                 {% if trick.images != null %}
                                     {% for img in trick.images %}
-                                        <div><img class="img-fluid rounded"
-                                                  src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/></div>
+                                        <div class="displayImage">
+                                            <img class="img-fluid rounded"
+                                                 src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/>
+
+                                            <form action="{{ path('delete_image', {'slug': trick.slug, 'id': img.id}) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?')">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ img.id) }}">
+                                                <button type="submit" class="delete-button">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                     {% endfor %}
                                 {% endif %}
 
@@ -127,14 +152,44 @@
                             <section class="mb-5">
                                 <p>{{ form_row(trickForm.name) }}</p>
                                 <p>{{ form_row(trickForm.description) }}</p>
+                                {{ form_row(trickForm.images) }}
+                                {{ form_row(trickForm.idCategory) }}
+
+                                <div id="videos-fields">
+                                    {{ form_errors(trickForm.videos) }}
+                                    {{ form_label(trickForm.videos) }}
+
+                                    {{ form_row(trickForm.videos) }}
+
+                                    <button type="button" id="add-video" class="btn btn-primary mt-2">Ajouter une vidéo</button>
+                                <script>
+                                    const addButton = document.getElementById('add-video');
+                                    const videosContainer = document.getElementById('videos-fields');
+                                    let index = {{ trickForm.videos|length }};
+
+                                    addButton.addEventListener('click', () => {
+                                        const template = `<div class="video-field">
+                                            <label for="trick_videos_${index}" class="form-label">Vidéo ${index + 1}</label>
+                                            <input type="text" id="trick_videos_${index}" name="trick[videos][${index}]" class="form-control" />
+                                          </div>`;
+                                        const wrapper = document.createElement('div');
+                                        wrapper.innerHTML = template;
+
+                                        videosContainer.appendChild(wrapper);
+                                        index++;
+                                    });
+                                </script>
+                                </div>
+
+                                <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
                             </section>
                         </figure>
                     </article>
 
-                    {{ form_row(trickForm.idCategory) }}
+
 
                 </div>
-                <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+{#                <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>#}
                 {{ form_end(trickForm) }}
             </div>
         </div>

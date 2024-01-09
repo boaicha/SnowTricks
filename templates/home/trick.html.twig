@@ -174,7 +174,7 @@
 
                                 <!-- Bouton "Load More" -->
 
-                                <div id="discussions"></div>
+                                <div id="discussions">
                                 {% for discussion in limitedDiscussions %}
                                     <div class="d-flex mb-4 discussion">
                                         <!-- Parent comment-->
@@ -188,9 +188,10 @@
                                         </div>
                                     </div>
                                 {% endfor %}
+                                   </div>
                             </div>
                             <section class="flex justify-center pt-5">
-                                <button type="button" class="btn btn-primary" id="load-more-btn">Voir plus</button>
+                                <button type="button" class="btn btn-primary" id="load-more-btn-dis">Voir plus</button>
                             </section>
 
                             <!-- Single comment-->
@@ -208,12 +209,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const loadMoreBtn = document.getElementById('load-more-btn');
+            const loadMoreBtn = document.getElementById('load-more-btn-dis');
             const trickContainer = document.getElementById('discussions');
 
             let offset = {{ limitedDiscussions|length }}; // Initialize the offset with the number of discussions already displayed
 
             loadMoreBtn.addEventListener('click', function() {
+                console.log('ici');
                 fetch(`/trick/loadMoreDiscussions?offset=${offset}`)
                     .then(response => response.json())
                     .then(data => {
@@ -249,6 +251,7 @@
                     });
 
             });
+            console.log('offset');
         });
     </script>
 

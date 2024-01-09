@@ -84,8 +84,11 @@ class TrickController extends AbstractController
         return $this->render('home/trick.html.twig', $parameters);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager, PictureService $pictureService): Response
     {
         $form = $this->createForm(TrickType::class, $trick);
         $form->handleRequest($request);
@@ -94,8 +97,45 @@ class TrickController extends AbstractController
         $criteria = Criteria::create()->setMaxResults(4);
         $limitedDiscussions = $discussions->matching($criteria);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $trick->setIdUser($this->getUser());
+
+            // ajouter la sauvegarde des images
+
+            $images = $form->get('images')->getData();
+            $videos = $form->get('videos')->getData();
+            $date = new DateTime('@'.strtotime('now'));
+
+            $trick->setModificationDate($date);
+            foreach ($images as $image) {
+
+                $folder = 'tricks';
+                $img = new Image();
+                $file = $pictureService->add($image, $folder, 300, 300);
+
+                $img->setImage($file);
+                $trick->addImage($img);
+            }
+
+
+            $videoObjects = [];
+            if (!empty($videos)) {
+                foreach ($videos as $videoUrl) {
+                    if (is_string($videoUrl)) {
+                        $video = new Video();
+                        $video->setVideo($videoUrl);
+                        $videoObjects[] = $video;
+                    }
+                }
+            }
+
+            // Set the videos to the trick entity
+            foreach ($videoObjects as $video) {
+                $trick->addVideo($video);
+            }
+
+            //
+
             $entityManager->persist($trick);
             $entityManager->flush();
 
@@ -109,13 +149,14 @@ class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/loadMoreDiscussions', name: 'loadMoreDiscussions', methods: ['GET'])]
+    #[Route('/loadMoreDiscussions', name: 'loadMoreDiscussions')]
     public function loadDiscussions(Request $request, Trick $trick): JsonResponse
     {
         $offset = $request->query->getInt('offset', 0);
         $limit = 4;
 
         $discussions = $trick->getDiscussions();
+        dd($discussions);
 
         if ($discussions->count() > 0) {
             $slicedDiscussions = $discussions->slice($offset, $limit);
@@ -177,7 +218,7 @@ class TrickController extends AbstractController
             if ($form->isSubmitted()) {
                 $images = $form->get('images')->getData();
                 $videos = $form->get('videos')->getData();
-
+//dd($videos);
                 $trick->setCreationDate($date);
                 $trick->setIdUser($this->getUser());
                 foreach ($images as $image) {
@@ -237,6 +278,54 @@ class TrickController extends AbstractController
             'discussionForm' => $form->createView()
         ]);
 
+    }
+
+//    #[Route('/{slug}/edit/{id}/deleteImage', name: 'delete_image', methods: ['POST'])]
+//    public function deleteImage($slug, $id, ManagerRegistry $doctrine): RedirectResponse
+//    {
+//        //Recuperer la personne.
+//        if ($id != 0) {
+//            $manager = $doctrine->getManager();
+//            $image = $manager->getRepository(Image::class)->find($id);
+//
+//            if (!$image) {
+//                // Handle the case where the image with the provided ID is not found
+//                $this->addFlash('error', 'Image not found.');
+//                return $this->redirectToRoute('app_home');
+//            }
+//
+//            $manager->remove($image);
+//            $manager->flush();
+//            //$this->addFlash('success', "l\'image est bien supprimé");
+//            return $this->redirectToRoute('app_home');
+//        } else {
+//            //$this->addFlash('erreur', "l\'image  est inexistante");
+//            return $this->redirectToRoute('app_home');
+//        }
+//        return $this->redirectToRoute('app_home');
+//    }
+    #[Route('/trick/{slug}/edit/{id}/deleteImage', name: 'delete_image', methods: ['POST'])]
+    public function deleteImage(Request $request, string $slug, int $id, ManagerRegistry $doctrine): Response
+    {
+        $submittedToken = $request->request->get('_token');
+        if ($this->isCsrfTokenValid('delete' . $id, $submittedToken)) {
+            $entityManager = $doctrine->getManager();
+            $image = $entityManager->getRepository(Image::class)->find($id);
+
+            if (!$image) {
+                $this->addFlash('error', 'Image not found.');
+                return $this->redirectToRoute('app_home');
+            }
+
+            $entityManager->remove($image);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Image deleted successfully.');
+            return $this->redirectToRoute('app_home');
+        } else {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirectToRoute('app_home');
+        }
     }
 
 
