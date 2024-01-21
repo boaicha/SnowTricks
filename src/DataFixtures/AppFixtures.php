@@ -108,8 +108,8 @@ class AppFixtures extends Fixture
                     un petit saut.Le but est d\'utiliser le flex de la board pour décoller au dessus du sol.',
                 'idCategory' => $categories['Autres'],
                 'images' => [
-                    ['name' => 'ollie-0.jpg'],
-                    ['name' => 'ollie-1.jpg']
+                    ['name' => '0cd407fa17974c961e6e472b9cbbce70.jpeg'],
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'aAefkzI-zS0']
@@ -120,7 +120,7 @@ class AppFixtures extends Fixture
                 'description' => 'Accroupis-toi, déplace ton poids vers l\'avant, puis utilise le nez de ta planche pour sauter.',
                 'idCategory' => $categories['Autres'],
                 'images' => [
-                    ['name' => 'nollie-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'aAzP3wNT220']
@@ -132,7 +132,7 @@ class AppFixtures extends Fixture
                     droit et en soulevant le Nose de la neige.',
                 'idCategory' => $categories['Autres'],
                 'images' => [
-                    ['name' => 'tail-press-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'Kv0Ah4Xd8d0']
@@ -144,7 +144,7 @@ class AppFixtures extends Fixture
                     de la planche, avec l\'arrière décollé de la neige.',
                 'idCategory' => $categories['Autres'],
                 'images' => [
-                    ['name' => 'nose-press-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'Px2YuKQVS_g']
@@ -155,7 +155,7 @@ class AppFixtures extends Fixture
                 'description' => 'Va en ligne droite et regarde derrière toi.',
                 'idCategory' => $categories['Autres'],
                 'images' => [
-                    ['name' => 'tripod-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'P6crQSwDjJY']
@@ -166,8 +166,8 @@ class AppFixtures extends Fixture
                 'description' => 'Attrape le carre des orteils de ta planche, entre les fixations, avec ta main arrière.',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'indy-0.jpg'],
-                    ['name' => 'indy-1.jpg']
+                    ['name' => '2ada5a8656026b0d5b356d8d0e61f605.jpeg'],
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => '6yA3XqjTh_w']
@@ -179,7 +179,7 @@ class AppFixtures extends Fixture
                     côté talon, avec ta main arrière.',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'stalefish-0.jpg']
+                    ['name' => '2ada5a8656026b0d5b356d8d0e61f605.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'f9FjhCt_w2U']
@@ -190,7 +190,7 @@ class AppFixtures extends Fixture
                 'description' => 'Attrape le talon de ta planche avec ta main arrière (juste à l\'extrémité, pas sur les côtés).',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'tail-0.jpg']
+                    ['name' => '1b0eed272509d76bc0ba3c59042e4dce.jpeg']
                 ]
             ],
             [
@@ -198,7 +198,7 @@ class AppFixtures extends Fixture
                 'description' => 'Du nom de Chris Weddle, l\'inventeur, attrape le carre des orteils entre les fixations avec ta main avant.',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'weddle-0.jpg']
+                    ['name' => '1b0eed272509d76bc0ba3c59042e4dce.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'c1vfTvXjVxY']
@@ -209,7 +209,7 @@ class AppFixtures extends Fixture
                 'description' => 'Passe la main avant derrière ton genou et attrape le bord des talons entre les fixations.',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'melon-0.jpg']
+                    ['name' => '1b0eed272509d76bc0ba3c59042e4dce.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'OMxJRz06Ujc']
@@ -221,7 +221,7 @@ class AppFixtures extends Fixture
                     forme de la queue d\'un scorpion',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'method-0.jpg']
+                    ['name' => '1b0eed272509d76bc0ba3c59042e4dce.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'lunYxCQrs1E']
@@ -232,7 +232,7 @@ class AppFixtures extends Fixture
                 'description' => 'Attrape l\'extrémité avant de ta planche avec ta main avant.',
                 'idCategory' => $categories['Grab'],
                 'images' => [
-                    ['name' => 'nose-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'gZFWW4Vus-Q']
@@ -244,7 +244,7 @@ class AppFixtures extends Fixture
                     directement en arrière',
                 'idCategory' => $categories['Flip'],
                 'images' => [
-                    ['name' => 'backflip-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'arzLq-47QFA'],
@@ -256,7 +256,7 @@ class AppFixtures extends Fixture
                 'description' => 'Tout comme le Tamedog, le Frontflip te demande de faire un Nose-Press et un Nollie sur un bord.',
                 'idCategory' => $categories['Flip'],
                 'images' => [
-                    ['name' => 'frontflip-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'BVeAbNIHktE']
@@ -276,7 +276,7 @@ class AppFixtures extends Fixture
                 'description' => 'L\'inverse du Rodéo, le Backside Rodéo consiste à amorcer un virage Backside à partir du saut',
                 'idCategory' => $categories['Flip'],
                 'images' => [
-                    ['name' => 'backside-rodeo-0.jpg']
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'QX6yvs6uTVg']
@@ -288,8 +288,8 @@ class AppFixtures extends Fixture
                     milieu de la planche.',
                 'idCategory' => $categories['Slide'],
                 'images' => [
-                    ['name' => 'bluntslide-0.jpg'],
-                    ['name' => 'bluntslide-1.jpg']
+                    ['name' => '1b0eed272509d76bc0ba3c59042e4dce.jpeg'],
+                    ['name' => '0dd16120b1164e762e42a90605dc22f7.jpeg']
                 ],
                 'videos' => [
                     ['name' => 'Nkotow1RyaQ']

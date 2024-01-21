@@ -149,33 +149,30 @@ class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/loadMoreDiscussions', name: 'loadMoreDiscussions')]
+    #[Route('/loadMoreDiscussions', name: 'loadMoreDiscussions', methods: ['GET'])]
     public function loadDiscussions(Request $request, Trick $trick): JsonResponse
     {
-        $offset = $request->query->getInt('offset', 0);
-        $limit = 4;
+        try {
+            $offset = $request->query->getInt('offset', 0);
+            $limit = 4;
 
-        $discussions = $trick->getDiscussions();
-        dd($discussions);
-
-        if ($discussions->count() > 0) {
+            $discussions = $trick->getDiscussions();
             $slicedDiscussions = $discussions->slice($offset, $limit);
 
             $jsonData = [];
             foreach ($slicedDiscussions as $discussion) {
                 $discussionData = [
-                    'id' => $discussion->getId(),
+                    'idUser' => $discussion->getIduser()->getId(),
                     'content' => $discussion->getContent(),
-                    'idUser'=> $discussion->getIduser()->getId(),
-                    'creationDate'=> $discussion->getCreationDate()->format('Y-m-d H:i:s'),
+                    // Add other properties as needed
                 ];
                 $jsonData[] = $discussionData;
             }
 
-            return new JsonResponse($jsonData);
+            return $this->json($jsonData);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return new JsonResponse([]);
     }
 
     #[Route('/{slug}/delete', name: 'app_trick_delete')]
@@ -326,6 +323,30 @@ class TrickController extends AbstractController
             $this->addFlash('error', 'Invalid CSRF token.');
             return $this->redirectToRoute('app_home');
         }
+    }
+
+
+
+    // essaie loadmore discussion
+    #[Route('/trick/{slug}/loadMoreComments', name: 'loadMoreComments', methods: ['GET'])]
+    public function loadMoreComments(Request $request, Trick $trick): JsonResponse
+    {
+        $offset = $request->query->getInt('offset', 0);
+        $limit = 4; // Adjust the limit as needed
+
+        $comments = $trick->getDiscussions()->slice($offset, $limit);
+
+        $jsonData = [];
+        foreach ($comments as $comment) {
+            $commentData = [
+                'id' => $comment->getId(),
+                'content' => $comment->getContent(),
+                // Add other properties as needed
+            ];
+            $jsonData[] = $commentData;
+        }
+
+        return $this->json($jsonData);
     }
 
 

@@ -176,6 +176,7 @@
 
                                 <div id="discussions">
                                 {% for discussion in limitedDiscussions %}
+                                    <div class="comment" data-comment-id="{{ discussion.id }}">
                                     <div class="d-flex mb-4 discussion">
                                         <!-- Parent comment-->
                                         <div class="flex-shrink-0"><img class="rounded-circle"
@@ -187,11 +188,13 @@
                                             {{ discussion }}
                                         </div>
                                     </div>
+                                    </div>
                                 {% endfor %}
                                    </div>
                             </div>
                             <section class="flex justify-center pt-5">
-                                <button type="button" class="btn btn-primary" id="load-more-btn-dis">Voir plus</button>
+{#                                <button type="button" class="btn btn-primary" id="load-more-btn-dis">Voir plus</button>#}
+                                <button class="btn btn-primary" id="load-more-btn" data-offset="{{ trick.discussions|length }}">Voir plus</button>
                             </section>
 
                             <!-- Single comment-->
@@ -205,58 +208,57 @@
     </section>
 
 
-{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const commentsContainer = document.getElementById('discussions');
+        let offset = {{ limitedDiscussions|length }};
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loadMoreBtn = document.getElementById('load-more-btn-dis');
-            const trickContainer = document.getElementById('discussions');
+        loadMoreBtn.addEventListener('click', function () {
+            fetch("{{ path('loadMoreComments', {'slug': trick.slug}) }}?offset=" + offset)
+                .then(response => response.json())
+                .then(data => {
 
-            let offset = {{ limitedDiscussions|length }}; // Initialize the offset with the number of discussions already displayed
 
-            loadMoreBtn.addEventListener('click', function() {
-                console.log('ici');
-                fetch(`/trick/loadMoreDiscussions?offset=${offset}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-
-                        // Append new discussions
+                    if (data.length > 0) {
                         data.forEach(item => {
-                            const discussion = item; // Access the details of the discussion in 'item'
-
-                            console.log(discussion);
+                            const discussion = item;
                             const discussionDiv = document.createElement('div');
                             discussionDiv.classList.add('d-flex', 'mb-4', 'discussion');
 
                             discussionDiv.innerHTML = `
-                            <div class="flex-shrink-0">
-                                <img class="rounded-circle"
-                                    src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
-                                    alt="...">
-                            </div>
-                            <div class="ms-3">
-                                <div class="fw-bold">${discussion.idUser}</div>
-                                ${discussion.content}
-                            </div>
-                        `;
-                            trickContainer.appendChild(discussionDiv);
+                                <div class="flex-shrink-0">
+                                    <img class="rounded-circle"
+                                        src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
+                                        alt="...">
+                                </div>
+                                <div class="ms-3">
+                                    <div class="fw-bold">
+                                        ${discussion.idUser}
+                                    </div>
+                                    ${discussion.content}
+                                </div>
+                            `;
+
+                            commentsContainer.appendChild(discussionDiv);
                         });
 
-                        offset += data.length; // Update the offset
-                        console.log(offset);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-
-            });
-            console.log('offset');
+                        offset += data.length;
+                        console.log('Updated Offset:', offset);
+                    } else {
+                        console.log('No more comments to load');
+                        // No more comments to load, you may want to hide or disable the button
+                        loadMoreBtn.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
-    </script>
+    });
+</script>
 
 
-{% endblock javascripts %}
 
 </html>
 {% endblock %}
