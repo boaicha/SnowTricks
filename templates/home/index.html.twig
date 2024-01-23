@@ -4,6 +4,9 @@
 
 {% block body %}*
     <html lang="en">
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
 
     <body class="d-flex flex-column h-100">
         <main class="flex-shrink-0">
@@ -18,11 +21,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row gx-5">
-
+                    <div class="row gx-5" id="tricks">
                         {% for trick in tricks %}
-
-                            <div class="col-lg-4 mb-5">
+                            <div class="col-lg-4 mb-5 trick">
                                 <div class="card h-100 shadow border-0">
 
                                     {% if trick.getImages().get(0) != null %}
@@ -50,11 +51,7 @@
                         {% endfor %}
                     </div>
                     <section class="flex justify-center pt-5">
-                        <div  id="voirPlusButton" class="inline-flex flex-col  justify-center font-medium px-2 bg-primary2 rounded-md lg:hover:-translate-y-1.5  lg:m-2 lg:p-2 lg:hover:shadow-lg lg:hover:duration-500 lg:hover:shadow-primary2 ">
-                            <a  type="button" class="inline-flex w-full flex-col items-center group">
-                                <span class="text-2xl">Voir plus de résultats</span>
-                            </a>
-                        </div>
+                        <button type="button" class="btn btn-primary" id="load-more-btn" data-is-clicked="false">Voir plus</button>
                     </section>
                 </div>
             </section>
@@ -65,26 +62,95 @@
         }
     </script>
         {% block javascripts %}
+{#            <script>#}
+{#                document.addEventListener("DOMContentLoaded", function() {#}
+{#                    const voirPlusButton = document.getElementById("voirPlusButton");#}
+{#                    const hiddenElements = document.querySelectorAll(".hidden");#}
+{#                    let startIndex = 5; // Vous pouvez ajuster le nombre initial d'éléments visibles#}
+
+{#                    voirPlusButton.addEventListener("click", function() {#}
+{#                        for (let i = startIndex; i < startIndex + 5 && i < hiddenElements.length; i++) {#}
+{#                            hiddenElements[i].classList.remove("hidden");#}
+{#                        }#}
+
+{#                        startIndex += 4;#}
+
+{#                        // Masquer le bouton "Voir plus" si tous les éléments sont affichés#}
+{#                        if (startIndex >= hiddenElements.length) {#}
+{#                            voirPlusButton.style.display = "none";#}
+{#                        }#}
+{#                    });#}
+{#                });#}
+{#            </script>#}
+
             <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    const voirPlusButton = document.getElementById("voirPlusButton");
-                    const hiddenElements = document.querySelectorAll(".hidden");
-                    let startIndex = 5; // Vous pouvez ajuster le nombre initial d'éléments visibles
+                document.addEventListener('DOMContentLoaded', function() {
 
-                    voirPlusButton.addEventListener("click", function() {
-                        for (let i = startIndex; i < startIndex + 5 && i < hiddenElements.length; i++) {
-                            hiddenElements[i].classList.remove("hidden");
+                    const loadMoreBtn = document.getElementById('load-more-btn');
+                    const trickContainer = document.getElementById('tricks');
+
+                    let offset = {{ tricks|length }}; // Initialize the offset with the number of tricks already displayed
+
+                    loadMoreBtn.addEventListener('click', function() {
+                        let isButtonClicked = loadMoreBtn.getAttribute('data-is-clicked') === 'true';
+
+                        if (!isButtonClicked) {
+                            // Perform your desired action here
+                            console.log('Button clicked!');
+
+                            // Set the data-is-clicked attribute to true
+                            loadMoreBtn.setAttribute('data-is-clicked', 'true');
                         }
 
-                        startIndex += 4;
+                        console.log("LOL : " + isButtonClicked);
 
-                        // Masquer le bouton "Voir plus" si tous les éléments sont affichés
-                        if (startIndex >= hiddenElements.length) {
-                            voirPlusButton.style.display = "none";
-                        }
+
+                        if(isButtonClicked === true){
+
+
+                            fetch(`/loadMoreTrick?offset=${offset}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+
+                                    // Append new tricks
+                                    data.forEach(item => {
+                                        const trick = item; // Access the details of the trick in 'item'
+
+                                        const trickDiv = document.createElement('div');
+                                        trickDiv.classList.add('col-lg-4', 'mb-5', 'trick');
+
+                                        trickDiv.innerHTML = `
+                            <div class="card h-100 shadow border-0">
+                                ${trick.images.length > 0 ?
+                                            `<img class="card-img-top" src="{{ asset('assets/uploads/tricks/') }}${trick.images[0].image}" alt="..."/>` :
+                                            `<img class="card-img-top" src="{{ asset('assets/uploads/tricks/defaut.jpg')}}" alt="..."/>`
+                                        }
+                                <div class="card-body p-4">
+                                    <a>
+                                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">New</div>
+                                        <p class="card-text mb-0">${trick.description}</p>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                                        trickContainer.appendChild(trickDiv);
+                                    });
+
+                                    offset += data.length; // Update the offset
+                                    console.log(offset);
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+
+                            loadMoreBtn.setAttribute('data-is-clicked', 'false');
+                    }
                     });
+
                 });
             </script>
+
         {% endblock javascripts %}
     </body>
     </html>
