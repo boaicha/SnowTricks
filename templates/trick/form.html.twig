@@ -1,4 +1,103 @@
-{{ form_start(form) }}
-{{ form_widget(form) }}
-<button class="btn btn-outline-success my-2">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="text-center mb-5">
+                <h1 class="fw-bolder">Créer une figure</h1>
+                {% for type, messages in app.session.flashbag.all() %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ type }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <form id="trickForm" action="{{ path('app_add') }}" method="post" enctype="multipart/form-data">
+                {{ form_start(form) }}
+                <div class="card rounded-3 py-5 px-4 px-md-5 mb-5">
+                    <div class="card-body">
+                        <div class="row gx-5 justify-content-center">
+                            <div class="col-10">
+                                <div class="mb-3">
+                                    {{ form_label(form.name, 'Nom de la figure', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Nom de figure'}}) }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.idCategory, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.idCategory, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+                                </div>
+
+
+
+
+
+                                <div id="videos-fields">
+                                    {{ form_errors(form.videos) }}
+                                    {{ form_label(form.videos) }}
+
+                                    {% for videoField in form.videos %}
+                                        <div class="video-field">
+                                            {{ form_widget(videoField) }}
+                                            {{ form_errors(videoField) }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <button type="button" id="add-video" class="btn btn-primary mt-2">Ajouter une vidéo</button>
+
+                                {# Autres boutons ou éléments du formulaire... #}
+
+
+                                <script>
+                                    const addButton = document.getElementById('add-video');
+                                    const videosContainer = document.getElementById('videos-fields');
+                                    let index = {{ form.videos|length }};
+
+                                    addButton.addEventListener('click', () => {
+                                        const template = `<div class="video-field">
+                                            <label for="trick_videos_${index}" class="form-label">Vidéo ${index + 1}</label>
+                                            <input type="text" id="trick_videos_${index}" name="trick[videos][${index}]" class="form-control" />
+                                          </div>`;
+                                        const wrapper = document.createElement('div');
+                                        wrapper.innerHTML = template;
+
+                                        videosContainer.appendChild(wrapper);
+                                        index++;
+                                    });
+                                </script>
+
+
+
+0
+
+
+                                <div class="mb-3">
+                                    {{ form_label(form.images, 'Images', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.images, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+
+                                {# Ajoutez d'autres champs de formulaire de manière similaire #}
+
+                                <div class="mb-3">
+                                    <button class="btn btn-lg btn-primary" type="submit">
+                                        {{ button_label|default('Enregistrer') }}
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

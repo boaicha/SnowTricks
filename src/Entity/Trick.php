@@ -9,7 +9,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
+#[UniqueEntity(
+    fields: ['slug'],
+    errorPath: 'title',
+    message: 'La valeur du titre est déjà utilisé.'
+)]
 class Trick
 {
     #[ORM\Id]
@@ -19,6 +25,8 @@ class Trick
 
     #[ORM\Column(length: 50)]
     private ?string $name = null;
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -40,11 +48,12 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Image::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Video::class)]
+    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Video::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
-    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Discussion::class)]
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Discussion::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $discussions;
+
 
     public function __construct()
     {
@@ -52,6 +61,7 @@ class Trick
         $this->videos = new ArrayCollection();
         $this->discussions = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -66,6 +76,17 @@ class Trick
     public function setName(string $name): static
     {
         $this->name = $name;
+        $this->setSlug($name);
+        return $this;
+    }
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = preg_replace("/[^a-z0-9\-]/", "", preg_replace("/[\s_]/", "-", mb_strtolower($slug)));
 
         return $this;
     }
@@ -144,11 +165,7 @@ class Trick
             $this->images->add($image);
             $image->setIdTrick($this);
         }
-//        if (!$this->images->contains($image)) {
-//            $this->images[] = $image;
-//            $image->setIdTrick($this);
-//        }
-//
+
 
         return $this;
     }

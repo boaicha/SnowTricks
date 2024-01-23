@@ -25,9 +25,9 @@ class Discussion
     #[ORM\JoinColumn(nullable: false)]
     private ?User $iduser = null;
 
-    #[ORM\ManyToOne(inversedBy: 'discussions')]
+    #[ORM\ManyToOne(targetEntity: Trick::class, inversedBy: 'discussions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?trick $idTrick = null;
+    private $trick;
 
     public function getId(): ?int
     {
@@ -70,15 +70,20 @@ class Discussion
         return $this;
     }
 
-    public function getIdTrick(): ?trick
+    public function getTrick(): ?trick
     {
-        return $this->idTrick;
+        return $this->trick;
     }
 
-    public function setIdTrick(?trick $idTrick): static
+    public function setTrick(?trick $idTrick): static
     {
-        $this->idTrick = $idTrick;
+        $this->trick = $idTrick;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getContent();
     }
 }

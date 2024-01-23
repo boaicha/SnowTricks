@@ -6,7 +6,9 @@
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
+        "ext-gd": "*",
         "ext-iconv": "*",
+        "ext-mysql_xdevapi": "*",
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.15",
@@ -39,10 +41,9 @@
         "symfony/web-link": "6.3.*",
         "symfony/yaml": "6.3.*",
         "symfonycasts/reset-password-bundle": "^1.17",
+        "symfonycasts/verify-email-bundle": "1.14",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-      "ext-gd": "*",
-        "ext-mysql_xdevapi": "*"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
