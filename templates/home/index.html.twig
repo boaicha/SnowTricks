@@ -2,13 +2,16 @@
 
 {% block title %}Hello HomeController!{% endblock %}
 
-{% block body %}*
+{% block body %}
     <html lang="en">
     <head>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     </head>
 
     <body class="d-flex flex-column h-100">
+    <svg id="scroll-down-btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down-square" viewBox="0 0 16 16" style="display: none; cursor: pointer;">
+        <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+    </svg>
         <main class="flex-shrink-0">
             <!-- Blog preview section-->
             <section class="py-5">
@@ -36,7 +39,7 @@
                                         <a>
                                             <div class="badge bg-primary bg-gradient rounded-pill mb-2">New</div>
                                             <p class="card-text mb-0">{{ trick.description }}</p>
-                                            <a href="{{ path('trick_show', {'slug': trick.slug}) }}">Afficher le trick</a>
+                                            <a href=`/trick/{{trick.slug}}`>Afficher le trick</a>
                                             {% if user != null %}
                                                 <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}"><i class="bi bi-pencil-fill"></i></a>
                                                 <a href="{{ path('app_trick_delete', {'slug': trick.slug}) }}" onclick="ask()"><i class="bi bi-trash" style="   "></i></a>
@@ -62,26 +65,7 @@
         }
     </script>
         {% block javascripts %}
-{#            <script>#}
-{#                document.addEventListener("DOMContentLoaded", function() {#}
-{#                    const voirPlusButton = document.getElementById("voirPlusButton");#}
-{#                    const hiddenElements = document.querySelectorAll(".hidden");#}
-{#                    let startIndex = 5; // Vous pouvez ajuster le nombre initial d'éléments visibles#}
 
-{#                    voirPlusButton.addEventListener("click", function() {#}
-{#                        for (let i = startIndex; i < startIndex + 5 && i < hiddenElements.length; i++) {#}
-{#                            hiddenElements[i].classList.remove("hidden");#}
-{#                        }#}
-
-{#                        startIndex += 4;#}
-
-{#                        // Masquer le bouton "Voir plus" si tous les éléments sont affichés#}
-{#                        if (startIndex >= hiddenElements.length) {#}
-{#                            voirPlusButton.style.display = "none";#}
-{#                        }#}
-{#                    });#}
-{#                });#}
-{#            </script>#}
 
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -111,12 +95,13 @@
                             fetch(`/loadMoreTrick?offset=${offset}`)
                                 .then(response => response.json())
                                 .then(data => {
-                                    console.log(data);
+
 
                                     // Append new tricks
                                     data.forEach(item => {
-                                        const trick = item; // Access the details of the trick in 'item'
 
+                                        const trick = item; // Access the details of the trick in 'item'
+                                        console.log(trick.slug);
                                         const trickDiv = document.createElement('div');
                                         trickDiv.classList.add('col-lg-4', 'mb-5', 'trick');
 
@@ -130,6 +115,11 @@
                                     <a>
                                         <div class="badge bg-primary bg-gradient rounded-pill mb-2">New</div>
                                         <p class="card-text mb-0">${trick.description}</p>
+                                        <a href="/trick/${trick.slug}">Afficher le trick</a>
+                                            {% if user != null %}
+                                                <a href="/trick/${trick.slug}/edit"><i class="bi bi-pencil-fill"></i></a>
+                                                <a href="/trick/${trick.slug}/delete" onclick="ask()"><i class="bi bi-trash" style="   "></i></a>
+                                            {% endif %}
                                     </a>
                                 </div>
                             </div>
@@ -148,6 +138,20 @@
                     }
                     });
 
+                });
+            </script>
+
+{#            scroll down button #}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const scrollDownBtn = document.getElementById('scroll-down-btn');
+
+                    scrollDownBtn.style.display = 'block';
+
+                    scrollDownBtn.addEventListener('click', function () {
+                        //scrollDownBtn.style.display = 'none';
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                    });
                 });
             </script>
 

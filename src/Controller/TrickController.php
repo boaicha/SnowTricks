@@ -120,20 +120,24 @@ class TrickController extends AbstractController
 
             $videoObjects = [];
             if (!empty($videos)) {
+
                 foreach ($videos as $videoUrl) {
-                    if (is_string($videoUrl)) {
+                    if (is_string($videoUrl->getVideo())) {
                         $video = new Video();
-                        $video->setVideo($videoUrl);
+                        $video->setVideo($videoUrl->getVideo());
                         $videoObjects[] = $video;
                     }
                 }
             }
+
+            //dd($videoObjects);
 
             // Set the videos to the trick entity
             foreach ($videoObjects as $video) {
                 $trick->addVideo($video);
             }
 
+            //dd($trick);
             //
 
             $entityManager->persist($trick);
