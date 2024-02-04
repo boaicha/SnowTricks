@@ -26,12 +26,11 @@ class TrickType extends AbstractType
             ])
             ->add('description')
             ->add('videos', CollectionType::class, [
-                'entry_type' => VideoType::class, // Utilisez VideoType pour les vidéos
+                'entry_type' => VideoType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
                 'required' => false,
-                // Autres options pour le champ vidéos si nécessaire
             ])
             ->add('images', FileType::class, [
                 'multiple' => true,

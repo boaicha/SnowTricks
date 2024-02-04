@@ -39,6 +39,7 @@ class TrickController extends AbstractController
     #[Route('/{slug}', name: 'trick_show')]
     public function show(?Trick $trick, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, Request $request, ?Discussion $discussions): Response
     {
+        //phpinfo();
         if (!$trick) {
             return $this->redirectToRoute('app_home');
         }
@@ -116,8 +117,6 @@ class TrickController extends AbstractController
                 $img->setImage($file);
                 $trick->addImage($img);
             }
-
-
             $videoObjects = [];
             if (!empty($videos)) {
 
@@ -130,15 +129,12 @@ class TrickController extends AbstractController
                 }
             }
 
-            //dd($videoObjects);
 
             // Set the videos to the trick entity
             foreach ($videoObjects as $video) {
                 $trick->addVideo($video);
             }
 
-            //dd($trick);
-            //
 
             $entityManager->persist($trick);
             $entityManager->flush();
@@ -219,7 +215,19 @@ class TrickController extends AbstractController
             if ($form->isSubmitted()) {
                 $images = $form->get('images')->getData();
                 $videos = $form->get('videos')->getData();
-//dd($videos);
+                
+
+                $vid = $trick->getVideos();
+
+                foreach ($vid as $video) {
+                    
+                    $videoUrl = $video->getVideo();
+                    $v = new Video();
+                    $v->setVideo($videoUrl);
+                    $trick->addVideo($v);
+                }
+                //
+
                 $trick->setCreationDate($date);
                 $trick->setIdUser($this->getUser());
                 foreach ($images as $image) {
@@ -233,8 +241,11 @@ class TrickController extends AbstractController
                 }
 
 
+                
                 if (is_array($videos)) {
+                    
                     foreach ($videos as $videoData) {
+                        
                         $video = new Video();
                         $video->setVideo($videoData->getVideo());
                         $trick->addVideo($video);
@@ -244,7 +255,6 @@ class TrickController extends AbstractController
                     $video->setVideo($videos);
                     $trick->addVideo($video);
                 }
-                //dd($trick);
 
                     $entityManager->persist($trick);
                     $entityManager->flush();
@@ -254,8 +264,6 @@ class TrickController extends AbstractController
             }
 
         } catch (\Exception $e) {
-            // Log or display the specific error message for debugging purposes
-            // Log the error: $this->logger->error($e->getMessage());
             dd($e);
         }
 
@@ -281,30 +289,6 @@ class TrickController extends AbstractController
 
     }
 
-//    #[Route('/{slug}/edit/{id}/deleteImage', name: 'delete_image', methods: ['POST'])]
-//    public function deleteImage($slug, $id, ManagerRegistry $doctrine): RedirectResponse
-//    {
-//        //Recuperer la personne.
-//        if ($id != 0) {
-//            $manager = $doctrine->getManager();
-//            $image = $manager->getRepository(Image::class)->find($id);
-//
-//            if (!$image) {
-//                // Handle the case where the image with the provided ID is not found
-//                $this->addFlash('error', 'Image not found.');
-//                return $this->redirectToRoute('app_home');
-//            }
-//
-//            $manager->remove($image);
-//            $manager->flush();
-//            //$this->addFlash('success', "l\'image est bien supprimé");
-//            return $this->redirectToRoute('app_home');
-//        } else {
-//            //$this->addFlash('erreur', "l\'image  est inexistante");
-//            return $this->redirectToRoute('app_home');
-//        }
-//        return $this->redirectToRoute('app_home');
-//    }
     #[Route('/trick/{slug}/edit/{id}/deleteImage', name: 'delete_image', methods: ['POST'])]
     public function deleteImage(Request $request, string $slug, int $id, ManagerRegistry $doctrine): Response
     {
