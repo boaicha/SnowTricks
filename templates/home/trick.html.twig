@@ -160,7 +160,9 @@
                                 {% endif %}
                             </div>
                             </div>
+                        {% if limitedDiscussions is not empty %}
                                 <hr>
+
                         <div class="card bg-light">
                             <div class="card-body">
                                 <!-- Comment with nested comments-->
@@ -175,6 +177,7 @@
                                 <!-- Bouton "Load More" -->
 
                                 <div id="discussions">
+
                                 {% for discussion in limitedDiscussions %}
                                     <div class="comment" data-comment-id="{{ discussion.id }}">
                                     <div class="d-flex mb-4 discussion">
@@ -190,7 +193,9 @@
                                     </div>
                                     </div>
                                 {% endfor %}
+
                                    </div>
+
                             </div>
                             <section class="flex justify-center pt-5">
 {#                                <button type="button" class="btn btn-primary" id="load-more-btn-dis">Voir plus</button>#}
@@ -200,6 +205,7 @@
                             <!-- Single comment-->
 
                         </div>
+                        {% endif %}
                     </section>
                     <hr>
                 </div>

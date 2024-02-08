@@ -106,6 +106,7 @@
             <div class="row gx-5">
                 <div class="">
                     {{ form_start(trickForm) }}
+                    {{ form_widget(trickForm._token) }}
                     <!-- Post content-->
                     <article>
 
@@ -155,31 +156,46 @@
                                 {{ form_row(trickForm.images) }}
                                 {{ form_row(trickForm.idCategory) }}
 
-                                <div id="videos-fields">
+                                <div id="videos-container">
                                     {{ form_errors(trickForm.videos) }}
-                                    {{ form_label(trickForm.videos) }}
+                                    <h2>Vidéos</h2>
+                                    {% for videoField in trickForm.videos %}
+                                        <div class="form-group">
+                                            {{ form_widget(videoField, {'attr': {'class': 'form-control'}}) }}
+                                            {% if loop.index > 1 %}
+                                                <button type="button" class="btn btn-danger remove-video">Supprimer</button>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <button type="button" id="add-video" class="btn btn-primary mt-2">Ajouter une vidéo</button>
 
-                                    {{ form_row(trickForm.videos) }}
-
-                                    <button type="button" id="add-video" class="btn btn-primary mt-2">Ajouter une vidéo</button>
                                 <script>
-                                    const addButton = document.getElementById('add-video');
-                                    const videosContainer = document.getElementById('videos-fields');
-                                    let index = {{ trickForm.videos|length }};
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const videosContainer = document.getElementById('videos-container');
+                                        const addVideoButton = document.getElementById('add-video');
 
-                                    addButton.addEventListener('click', () => {
-                                        const template = `<div class="video-field">
-                                            <label for="trick_videos_${index}" class="form-label">Vidéo ${index + 1}</label>
-                                            <input type="text" id="trick_videos_${index}" name="trick[videos][${index}]" class="form-control" />
-                                          </div>`;
-                                        const wrapper = document.createElement('div');
-                                        wrapper.innerHTML = template;
+                                        addVideoButton.addEventListener('click', function () {
+                                            const videoIndex = videosContainer.querySelectorAll('.form-group').length;
+                                            const newVideoField = `
+                    <div class="form-group">
+                        <input type="text" id="trick_videos_${videoIndex}_video" name="trick[videos][${videoIndex}][video]" class="form-control" placeholder="Entrez l'URL de la vidéo">
+                        <button type="button" class="btn btn-danger remove-video">Supprimer</button>
+                    </div>
+                `;
+                                            videosContainer.insertAdjacentHTML('beforeend', newVideoField);
+                                        });
 
-                                        videosContainer.appendChild(wrapper);
-                                        index++;
+                                        // Event delegation to handle remove video button clicks
+                                        videosContainer.addEventListener('click', function (event) {
+                                            if (event.target.classList.contains('remove-video')) {
+                                                event.target.closest('.form-group').remove();
+                                            }
+                                        });
                                     });
                                 </script>
-                                </div>
+
+
 
                                 <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
                             </section>
@@ -190,6 +206,8 @@
 
                 </div>
 {#                <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>#}
+
+
                 {{ form_end(trickForm) }}
             </div>
         </div>

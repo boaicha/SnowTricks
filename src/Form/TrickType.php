@@ -14,6 +14,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Constraints\Valid;
 
 class TrickType extends AbstractType
 {
@@ -25,17 +29,31 @@ class TrickType extends AbstractType
                 'class' => Category::class
             ])
             ->add('description')
-            ->add('videos', CollectionType::class, [
-                'entry_type' => VideoType::class,
+//            ->add("videos", CollectionType::class, [
+//                "entry_type" => VideoType::class,
+//                'entry_options' => ['label' => false],
+//                'allow_add' => true,
+//                "required" => false,
+//                "label" => false,
+//                'constraints' => [
+//                    new Valid(),
+//                ],
+//            ])
+            ->add("videos", CollectionType::class, [
+                "entry_type" => VideoType::class,
+                'entry_options' => ['label' => false],
                 'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'required' => false,
+                "required" => false,
+                "label" => false
+
             ])
             ->add('images', FileType::class, [
                 'multiple' => true,
                 'mapped' => false,
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'enctype' => 'multipart/form-data',
+                ],
             ])
         ;
     }
@@ -44,6 +62,7 @@ class TrickType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Trick::class,
+            'validation_groups' => ['creation']
         ]);
     }
 }
