@@ -7,6 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
 
 class VideoType extends AbstractType
 {
@@ -14,14 +16,17 @@ class VideoType extends AbstractType
     {
         $builder
             ->add('video', TextType::class, [
-            ])
-        ;
+                "label" => false,
+                "attr" => [
+                    // ... other attributes
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Video::class,
+            'data_class' => Video::class
         ]);
     }
 }

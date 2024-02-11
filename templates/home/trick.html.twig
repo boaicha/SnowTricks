@@ -2,231 +2,214 @@
 
 {% block title %}Hello HomeController!{% endblock %}
 
-
 {% block body %}
-<html lang="en">
-<head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+    <html lang="en">
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
     <style>
+        /* Add your custom CSS styles here */
         #main {
-            width: 980px;
-
-            height: 400px;
-
+            width: 92%;
+            margin: auto;
             display: flex;
             flex-wrap: wrap;
         }
 
-
-        #main div iframe {
-            width: 200px;
-            height: 150px; /* Adjust the height as needed */
-            margin: 10px; /* Add margin for spacing */
-        }
-
-        .agrandir {
-            width: 970px;
-            height: 600px;
-        }
-
-
-        body {
-            margin-bottom: 100px;
-            z-index: 100;/* Espace pour empêcher le contenu de chevaucher la section fixe en bas */
-        }
-        .comments-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            max-width: 800px; /* Largeur maximale de la section */
-            padding: 20px;
-            background-color: #fff;
-            z-index: 9999; /* Ajustez la valeur z-index si nécessaire pour empêcher le chevauchement avec d'autres éléments */
-        }
-
-    /*    TEST */
-        #main {
-            width: 92%; /* Set the main content width to occupy 80% of the page */
-            margin: auto; /* Center the main content horizontally */
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        /* Adjusted column widths for responsiveness */
         .col-lg-9 {
-            flex: 0 0 70%; /* Set the width to occupy 70% of the available space */
+            flex: 0 0 70%;
             max-width: 70%;
-            margin-right: 5%; /* Add space between columns */
+            margin-right: 5%;
         }
 
         .col-lg-3 {
-            flex: 0 0 25%; /* Set the width for the sidebar content */
+            flex: 0 0 25%;
             max-width: 25%;
         }
 
-
         #main div img {
             width: 200px;
-            height: 150px; /* Adjust the height as needed */
-            margin: 5px; /* Add margin for spacing */
+            height: 150px;
+            margin: 5px;
+        }
+
+        @media (min-width: 992px) {
+            .media-toggle-btn {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .media-container {
+                display: none;
+            }
+        }
+
+        .media-container {
+            width: 92%;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .media-container iframe,
+        .media-container img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+
+        @media (min-width: 992px) {
+            .media-toggle-btn {
+                display: none !important;
+            }
         }
     </style>
 
     <section class="py-5">
-        <div class="container px-5 my-5">
-            <div class="row gx-5">
-{#                <div class="col-lg-3">#}
-{#                    <div class="d-flex align-items-center mt-lg-5 mb-4">#}
-{#                        <img class="img-fluid rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"#}
-{#                             alt="..."/>#}
-{#                        <div class="ms-3">#}
-{#                            <div class="fw-bold">Valerie Luna</div>#}
-{#                            <div class="text-muted">News, Business</div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
+        <div class="container">
+            <div class="">
                 <div class="">
                     <!-- Post content-->
                     <article>
                         <!-- Post header-->
-                        <header class="mb-4">
+                        <header class="">
                             <!-- Post title-->
                             <h1 class="fw-bolder mb-1">{{ trick.name }}</h1>
                             {% if user != null %}
                                 <div style="margin-left: 90%">
-                                <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
-                                    </svg></a>&nbsp;&nbsp;&nbsp;
-                                <a href="{{ path('app_trick_delete', {'slug': trick.slug}) }}" onclick="ask()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                                    </svg></a>
+                                    <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                                        </svg></a>&nbsp;&nbsp;&nbsp;
+                                    <a href="{{ path('app_trick_delete', {'slug': trick.slug}) }}" onclick="ask()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                        </svg></a>
                                 </div>
                             {% endif %}
-                            <!-- Post meta content-->
-
-                            <!-- Post categories-->
-
                         </header>
-                        <!-- Preview image figure-->
 
                         {% if image != null %}
-                        <figure class="mb-4"><img class="img-fluid rounded agrandir"
-                                                  src="{{ asset('assets/uploads/tricks/') ~ image.getImage() }}" alt="..."/>
-                            {% else %}
-                            <figure class="mb-4"><img class="img-fluid rounded"
-                                                      src="{{ asset('assets/uploads/tricks/defaut.jpg')}}" alt="..."/>
-                            {% endif %}
-                        </figure>
-
-                            <div id="main">
-
-                            {% if videos != null %}
-                                {% for video in videos %}
-                                <div><iframe src="{{ video.getVideo }}" allowfullscreen></iframe></div>
-                                {% endfor %}
-                                {% endif %}
-                            {% if images != null %}
-                            {% for img in images %}
-                            <div><img class="img-fluid rounded"
-                                                      src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/></div>
-                                {% endfor %}
-                                {% endif %}
-
-                            </div>
-                        <!-- Post content-->
-                            <section class="mb-5">
-                                <p>{{ trick.description }}</p>
-                            </section>
+                            <figure class="mb-4">
+                                <img class="img-fluid rounded agrandir" src="{{ asset('assets/uploads/tricks/') ~ image.getImage() }}" alt="..."/>
                             </figure>
-                    </article>
+                        {% else %}
+                            <figure class="mb-4">
+                                <img class="img-fluid rounded" src="{{ asset('assets/uploads/tricks/defaut.jpg')}}" alt="..."/>
+                            </figure>
+                        {% endif %}
 
-                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.creationdate|date('d-M-Y') }}</a>
-                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.modificationDate |date('d-M-Y') }}</a>
-                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.idCategory }}</a>
-                <hr>
+                        <center>
+                        <button class="media-toggle-btn hidden-lg-up">Voir les médias</button>
 
-                    <!-- Comments section-->
+                        </center>
+                        <br/>
+                        <div id="main" class="media-container">
+                            <div class="media-container mobile-view">
 
-
-                    <section>
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <!-- Comment form-->
-                                {% if user != null %}
-                                {{ include('trick/discussion.html.twig', {'button_label': 'Valider'}) }}
+                                {% if images != null %}
+                                    {% for img in images %}
+                                        <div><img class="img-fluid rounded" src="{{ asset('assets/uploads/tricks/mini/300x300-') ~ img.getImage() }}" alt="..."/></div>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if videos != null %}
+                                {% for video in videos %}
+                                    <div><iframe src="{{ video.getVideo }}" allowfullscreen></iframe></div>
+                                {% endfor %}
                                 {% endif %}
                             </div>
-                            </div>
-                                <hr>
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <!-- Comment with nested comments-->
-                                <!-- Ajoutez un conteneur pour les commentaires -->
-                                <div id="comment-section">
-                                    <!-- Vos commentaires existants -->
-                                    {% for discussion in trick.discussions %}
-                                        <!-- Afficher les commentaires existants -->
-                                    {% endfor %}
-                                </div>
-
-                                <!-- Bouton "Load More" -->
-
-                                <div id="discussions">
-                                {% for discussion in limitedDiscussions %}
-                                    <div class="comment" data-comment-id="{{ discussion.id }}">
-                                    <div class="d-flex mb-4 discussion">
-                                        <!-- Parent comment-->
-                                        <div class="flex-shrink-0"><img class="rounded-circle"
-                                                                        src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
-                                                                        alt="..."/></div>
-                                        <div class="ms-3">
-
-                                            <div class="fw-bold">{{ discussion.idUser.name }}</div>
-                                            {{ discussion }}
-                                        </div>
-                                    </div>
-                                    </div>
-                                {% endfor %}
-                                   </div>
-                            </div>
-                            <section class="flex justify-center pt-5">
-{#                                <button type="button" class="btn btn-primary" id="load-more-btn-dis">Voir plus</button>#}
-                                <button class="btn btn-primary" id="load-more-btn" data-offset="{{ trick.discussions|length }}">Voir plus</button>
-                            </section>
-
-                            <!-- Single comment-->
-
                         </div>
-                    </section>
-                    <hr>
+
+                        <!-- Post content-->
+
+                    </article>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Comments section-->
+    <div class="mb-5">
+        <p>{{ trick.description }}</p>
+    </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        const commentsContainer = document.getElementById('discussions');
-        let offset = {{ limitedDiscussions|length }};
+    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.creationdate|date('d-M-Y') }}</a>
+    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.modificationDate |date('d-M-Y') }}</a>
+    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ trick.idCategory }}</a>
 
-        loadMoreBtn.addEventListener('click', function () {
-            fetch("{{ path('loadMoreComments', {'slug': trick.slug}) }}?offset=" + offset)
-                .then(response => response.json())
-                .then(data => {
+    <div class="card bg-light">
+        <div class="card-body">
+            <!-- Comment form-->
+            {% if user != null %}
+                {{ include('trick/discussion.html.twig', {'button_label': 'Valider'}) }}
+            {% endif %}
+        </div>
+    </div>
+
+    {% if limitedDiscussions is not empty %}
+        <hr>
+        <div class="card bg-light">
+            <div class="card-body">
+                <!-- Comment with nested comments-->
+                <div id="comment-section">
+                    {% for discussion in trick.discussions %}
+                        <!-- Display existing comments -->
+                    {% endfor %}
+                </div>
+
+                <!-- Load More Button -->
+
+                <div id="discussions">
+                    {% for discussion in limitedDiscussions %}
+                        <div class="comment" data-comment-id="{{ discussion.id }}">
+                            <div class="d-flex mb-4 discussion">
+                                <!-- Parent comment-->
+                                <div class="flex-shrink-0">
+                                    <img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="fw-bold">{{ discussion.idUser.name }}</div>
+                                    {{ discussion }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
 
 
-                    if (data.length > 0) {
-                        data.forEach(item => {
-                            const discussion = item;
-                            const discussionDiv = document.createElement('div');
-                            discussionDiv.classList.add('d-flex', 'mb-4', 'discussion');
+        </div>
+    {% endif %}
+    <section class="flex justify-center pt-5">
+        <center>
+            <button class="btn btn-primary" id="load-more-btn" data-offset="{{ trick.discussions|length }}">Voir plus</button>
+        </center>
+    </section>
 
-                            discussionDiv.innerHTML = `
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            const commentsContainer = document.getElementById('discussions');
+            let offset = {{ limitedDiscussions|length }};
+
+            loadMoreBtn.addEventListener('click', function () {
+                fetch("{{ path('loadMoreComments', {'slug': trick.slug}) }}?offset=" + offset)
+                    .then(response => response.json())
+                    .then(data => {
+
+
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const discussion = item;
+                                const discussionDiv = document.createElement('div');
+                                discussionDiv.classList.add('d-flex', 'mb-4', 'discussion');
+
+                                discussionDiv.innerHTML = `
                                 <div class="flex-shrink-0">
                                     <img class="rounded-circle"
                                         src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
@@ -240,25 +223,35 @@
                                 </div>
                             `;
 
-                            commentsContainer.appendChild(discussionDiv);
-                        });
+                                commentsContainer.appendChild(discussionDiv);
+                            });
 
-                        offset += data.length;
-                        console.log('Updated Offset:', offset);
-                    } else {
-                        console.log('No more comments to load');
-                        // No more comments to load, you may want to hide or disable the button
-                        loadMoreBtn.style.display = 'none';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                            offset += data.length;
+                            console.log('Updated Offset:', offset);
+                        } else {
+                            console.log('No more comments to load');
+                            loadMoreBtn.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
         });
-    });
-</script>
+    </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const mediaToggleBtn = document.querySelector(".media-toggle-btn");
+            const mediaContainer = document.querySelector(".media-container");
 
+            if (mediaToggleBtn && mediaContainer) {
+                mediaToggleBtn.addEventListener("click", function() {
+                    mediaContainer.style.display = (mediaContainer.style.display === "none") ? "block" : "none";
+                });
+            }
+        });
+    </script>
 
-</html>
-{% endblock %}
+    </html>
+{% endblock%}

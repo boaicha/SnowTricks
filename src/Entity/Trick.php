@@ -49,7 +49,7 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Image::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Video::class, orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'idTrick', targetEntity: Video::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $videos;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Discussion::class, orphanRemoval: true, cascade: ['persist'])]
@@ -191,14 +191,22 @@ class Trick
         return $this->videos;
     }
 
-    public function addVideo(Video $video): static
+//    public function addVideo(Video $video): static
+//    {
+//        if (!$this->videos->contains($video)) {
+//            $this->videos->add($video);
+//            $video->setIdTrick($this);
+//        }
+//
+//        return $this;
+//    }
+
+    public function addVideo(Video $video): void
     {
         if (!$this->videos->contains($video)) {
-            $this->videos->add($video);
+            $this->videos[] = $video;
             $video->setIdTrick($this);
         }
-
-        return $this;
     }
 
     public function removeVideo(Video $video): static
@@ -246,6 +254,13 @@ class Trick
     public function __toString(): string {
         return $this->getIdCategory();
     }
+
+    public function setVideos(Collection $videos): void
+    {
+        $this->videos = $videos;
+    }
+
+
 
 
 }

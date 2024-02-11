@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\VideoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Va\Constraints as CustomAssert;
 
 #[ORM\Entity(repositoryClass: VideoRepository::class)]
 class Video
@@ -13,7 +15,19 @@ class Video
     #[ORM\Column]
     private ?int $id = null;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Url(
+     *     protocols = {"http", "https"},
+     *     message = "Invalid YouTube video URL."
+     * )
+     */
+
     #[ORM\Column(length: 255)]
+    #[Assert\Url(
+        groups: ["creation"],
+        message: 'URL non valide',
+    )]
     private ?string $video = null;
 
     #[ORM\ManyToOne(inversedBy: 'videos')]
@@ -48,4 +62,5 @@ class Video
 
         return $this;
     }
+
 }

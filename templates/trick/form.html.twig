@@ -1,3 +1,4 @@
+{# trick/new.html.twig #}
 
 
 {% block body %}
@@ -34,65 +35,31 @@
                                     {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
                                 </div>
 
-
-
-
-
-                                <div id="videos-fields">
+                                <div id="videos-container">
                                     {{ form_errors(form.videos) }}
-                                    {{ form_label(form.videos) }}
-
+                                    <h2>Vidéos</h2>
                                     {% for videoField in form.videos %}
-                                        <div class="video-field">
-                                            {{ form_widget(videoField) }}
-                                            {{ form_errors(videoField) }}
+                                        <div class="form-group">
+                                            {{ form_widget(videoField, {'attr': {'class': 'form-control'}}) }}
+                                            {% if loop.index > 1 %}
+                                                <button type="button" class="btn btn-danger remove-video">Supprimer</button>
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
                                 </div>
-
                                 <button type="button" id="add-video" class="btn btn-primary mt-2">Ajouter une vidéo</button>
-
-                                {# Autres boutons ou éléments du formulaire... #}
-
-
-                                <script>
-                                    const addButton = document.getElementById('add-video');
-                                    const videosContainer = document.getElementById('videos-fields');
-                                    let index = {{ form.videos|length }};
-
-                                    addButton.addEventListener('click', () => {
-                                        const template = `<div class="video-field">
-                                            <label for="trick_videos_${index}" class="form-label">Vidéo ${index + 1}</label>
-                                            <input type="text" id="trick_videos_${index}" name="trick[videos][${index}]" class="form-control" />
-                                          </div>`;
-                                        const wrapper = document.createElement('div');
-                                        wrapper.innerHTML = template;
-
-                                        videosContainer.appendChild(wrapper);
-                                        index++;
-                                    });
-                                </script>
-
-
-
-0
-
 
                                 <div class="mb-3">
                                     {{ form_label(form.images, 'Images', {'label_attr': {'class': 'form-label'}}) }}
                                     {{ form_widget(form.images, {'attr': {'class': 'form-control'}}) }}
                                 </div>
 
-                                {# Ajoutez d'autres champs de formulaire de manière similaire #}
-
                                 <div class="mb-3">
                                     <button class="btn btn-lg btn-primary" type="submit">
                                         {{ button_label|default('Enregistrer') }}
                                     </button>
-
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -100,4 +67,30 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const videosContainer = document.getElementById('videos-container');
+            const addVideoButton = document.getElementById('add-video');
+
+            addVideoButton.addEventListener('click', function () {
+                const videoIndex = videosContainer.querySelectorAll('.form-group').length;
+                const newVideoField = `
+                    <div class="form-group">
+                        <input type="text" id="trick_videos_${videoIndex}_video" name="trick[videos][${videoIndex}][video]" class="form-control" placeholder="Entrez l'URL de la vidéo">
+                        <button type="button" class="btn btn-danger remove-video">Supprimer</button>
+                    </div>
+                `;
+                videosContainer.insertAdjacentHTML('beforeend', newVideoField);
+            });
+
+            // Event delegation to handle remove video button clicks
+            videosContainer.addEventListener('click', function (event) {
+                if (event.target.classList.contains('remove-video')) {
+                    event.target.closest('.form-group').remove();
+                }
+            });
+        });
+    </script>
+
 {% endblock %}
