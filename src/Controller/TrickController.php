@@ -43,7 +43,6 @@ class TrickController extends AbstractController
     #[Route('/{slug}', name: 'trick_show')]
     public function show(?Trick $trick, ManagerRegistry $doctrine, EntityManagerInterface $entityManager, Request $request, ?Discussion $discussions): Response
     {
-        //phpinfo();
         if (!$trick) {
             return $this->redirectToRoute('app_home');
         }
@@ -91,133 +90,6 @@ class TrickController extends AbstractController
         return $this->render('home/trick.html.twig', $parameters);
     }
 
-    /**
-     * @throws Exception
-     */
-//    #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
-//    public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager, PictureService $pictureService, SessionInterface $session): Response
-//    {
-//        $form = $this->createForm(TrickType::class, $trick);
-//        //$form = $this->createForm(TrickType::class, $trick, ['multipart' => true]);
-//
-//        $form->handleRequest($request);
-//
-//        $discussions = $trick->getDiscussions();
-//        $criteria = Criteria::create()->setMaxResults(4);
-//        $limitedDiscussions = $discussions->matching($criteria);
-//
-//
-//        if ($form->isSubmitted() ) {
-//            //dd($trick);
-//            $trick->setIdUser($this->getUser());
-//
-//            // ajouter la sauvegarde des images
-//
-//            $images = $form->get('images')->getData();
-//            $videos = $form->get('videos')->getData();
-//            dd($videos);
-//            $date = new DateTime('@'.strtotime('now'));
-//
-//            $trick->setModificationDate($date);
-//            foreach ($images as $image) {
-//
-//                $folder = 'tricks';
-//                $img = new Image();
-//                $file = $pictureService->add($image, $folder, 300, 300);
-//
-//                $img->setImage($file);
-//                $trick->addImage($img);
-//            }
-//            $videoObjects = [];
-//            if (!empty($videos)) {
-//
-//                foreach ($videos as $videoUrl) {
-//                    if (is_string($videoUrl->getVideo())) {
-//                        $video = new Video();
-//                        $video->setVideo($videoUrl->getVideo());
-//                        $videoObjects[] = $video;
-//                    }
-//                }
-//            }
-//
-//
-//            // Set the videos to the trick entity
-//            foreach ($videoObjects as $video) {
-//                $trick->addVideo($video);
-//            }
-//
-//
-//            $entityManager->persist($trick);
-//            $entityManager->flush();
-//
-//            $session->getFlashBag()->add('success', 'La figure à bien été modifié');
-//            return $this->redirectToRoute('app_home', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
-//        }
-//
-//        return $this->render('trick/edit.html.twig', [
-//            'trick' => $trick,
-//            'trickForm' => $form,
-//            'limitedDiscussions' => $limitedDiscussions
-//        ]);
-//    }
-
-
-//    #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
-//    public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager, PictureService $pictureService, SessionInterface $session, ValidatorInterface $validator): Response
-//    {
-//        $form = $this->createForm(TrickType::class, $trick);
-//        $form->handleRequest($request);
-//
-//        $discussions = $trick->getDiscussions();
-//        $criteria = Criteria::create()->setMaxResults(4);
-//        $limitedDiscussions = $discussions->matching($criteria);
-//
-//        //dd($validator->validate($form->getData()));
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $trick->setIdUser($this->getUser());
-//
-//            // Save images
-//            $images = $form->get('images')->getData();
-//            foreach ($images as $image) {
-//                $folder = 'tricks';
-//                $img = new Image();
-//                $file = $pictureService->add($image, $folder, 300, 300);
-//                $img->setImage($file);
-//                $trick->addImage($img);
-//            }
-//
-//            // Save videos
-//            $videos = $form->get('videos')->getData();
-//            //$trick->setVideos(new ArrayCollection()); // Clear existing videos
-//
-//            foreach ($videos as $video) {
-//                if ($video instanceof Video) {
-//                    $trick->addVideo($video);
-//                }
-//            }
-//
-//            // Set modification date
-//            $date = new DateTime('@' . strtotime('now'));
-//            $trick->setModificationDate($date);
-//
-//            $entityManager->persist($trick);
-//            $entityManager->flush();
-//
-//            $session->getFlashBag()->add('success', 'La figure a bien été modifiée');
-//            return $this->redirectToRoute('app_home', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
-//        }else {
-//            // Debugging: Output validation errors
-//            $errors = $validator->validate($form->getData());
-//            dump($errors);
-//        }
-//
-//        return $this->render('trick/edit.html.twig', [
-//            'trick' => $trick,
-//            'trickForm' => $form,
-//            'limitedDiscussions' => $limitedDiscussions
-//        ]);
-//    }
 
 
     #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
@@ -230,7 +102,7 @@ class TrickController extends AbstractController
         $criteria = Criteria::create()->setMaxResults(4);
         $limitedDiscussions = $discussions->matching($criteria);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $trick->setIdUser($this->getUser());
 
             // ajouter la sauvegarde des images
@@ -267,6 +139,7 @@ class TrickController extends AbstractController
             'trickForm' => $form,
             'limitedDiscussions' => $limitedDiscussions
         ]);
+
     }
 
 
@@ -421,7 +294,7 @@ class TrickController extends AbstractController
     public function loadMoreComments(Request $request, Trick $trick): JsonResponse
     {
         $offset = $request->query->getInt('offset', 0);
-        $limit = 4; // Adjust the limit as needed
+        $limit = 4;
 
         $comments = $trick->getDiscussions()->slice($offset, $limit);
 
