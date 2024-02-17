@@ -7,30 +7,20 @@ use App\Entity\Image;
 use App\Entity\Trick;
 use App\Entity\Video;
 use App\Form\DiscussionType;
-use App\Form\TrickFormType;
 use App\Form\TrickType;
-use App\Repository\TrickRepository;
 use App\Services\PictureService;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use phpDocumentor\Reflection\Types\Boolean;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use function PHPUnit\Framework\isEmpty;
-use function PHPUnit\Framework\isNull;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -157,8 +147,7 @@ class TrickController extends AbstractController
             foreach ($slicedDiscussions as $discussion) {
                 $discussionData = [
                     'idUser' => $discussion->getIduser()->getId(),
-                    'content' => $discussion->getContent(),
-                    // Add other properties as needed
+                    'content' => $discussion->getContent()
                 ];
                 $jsonData[] = $discussionData;
             }
@@ -205,12 +194,8 @@ class TrickController extends AbstractController
         }
         try {
 
-            // perform some task
-            //dd($form->get('videos')->getData());
             if ($form->isSubmitted() && $form->isValid()) {
                 $images = $form->get('images')->getData();
-                $videos = $form->get('videos')->getData();
-
 
                 foreach ($trick->getVideos() as $video) {
                     $video->setIdTrick($trick);
@@ -248,20 +233,6 @@ class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/trick/{slug}', name: 'app_discussion')]
-    public function discussionTrick(): Response
-    {
-        //Crée un "nouveau trick"
-        $discussion = new Discussion();
-
-        //Crée le formulaire
-        $form = $this->createForm(DiscussionType::class, $discussion);
-
-        return $this->render('trick/discussion.html.twig', [
-            'discussionForm' => $form->createView()
-        ]);
-
-    }
 
     #[Route('/trick/{slug}/edit/{id}/deleteImage', name: 'delete_image', methods: ['POST'])]
     public function deleteImage(Request $request, string $slug, int $id, ManagerRegistry $doctrine): Response
@@ -302,14 +273,62 @@ class TrickController extends AbstractController
         foreach ($comments as $comment) {
             $commentData = [
                 'id' => $comment->getId(),
-                'content' => $comment->getContent(),
-                // Add other properties as needed
+                'content' => $comment->getContent()
             ];
             $jsonData[] = $commentData;
         }
 
         return $this->json($jsonData);
     }
+
+
+
+    #[Route('/{slug}/edit/{id}/deleteVideo', name: 'delete_video', methods: ['POST'])]
+    public function deleteVideo(Request $request, string $slug, int $id, ManagerRegistry $doctrine): Response
+    {
+        //dd($slug);
+        $submittedToken = $request->request->get('_token');
+        $videoCsrfToken = 'delete' . $id;
+
+        if ($this->isCsrfTokenValid($videoCsrfToken, $submittedToken)) {
+            $entityManager = $doctrine->getManager();
+
+            $trick = $entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
+            $videos = $entityManager->getRepository(Video::class)->findBy(['idTrick' => $trick]);
+
+            if (!$trick) {
+                $this->addFlash('error', 'Trick not found.');
+                return $this->redirectToRoute('app_home');
+            }
+
+
+            foreach ($videos as $video){
+
+                if (!$video->getId() == $id) {
+                    $this->addFlash('error', 'Video not found.');
+                    return $this->redirectToRoute('app_home');
+                }
+
+                if($video->getId() == $id){
+
+
+                    $trick->removeVideo($video);
+                    $entityManager->flush();
+                }
+
+
+            }
+
+
+            $this->addFlash('success', 'Video deleted successfully.');
+            return $this->redirectToRoute('app_home');
+        } else {
+            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirectToRoute('app_home');
+        }
+
+    }
+
 
 
 

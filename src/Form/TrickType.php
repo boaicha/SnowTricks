@@ -44,7 +44,8 @@ class TrickType extends AbstractType
                 'entry_options' => ['label' => false],
                 'allow_add' => true,
                 "required" => false,
-                "label" => false
+                "label" => false,
+                "empty_data" => null
 
             ])
             ->add('images', FileType::class, [
