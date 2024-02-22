@@ -60,9 +60,21 @@ class TrickController extends AbstractController
         $images = $entityManager->getRepository(Image::class)->findBy(['idTrick' => $trick->getId()]);
 
         $discussions = $trick->getDiscussions();
-        $criteria = Criteria::create()->setMaxResults(4);
-        $limitedDiscussions = $discussions->matching($criteria);
+        //$criteria = Criteria::create()->orderBy(['creationDate' => 'DESC'])->setMaxResults(4);
+        //$limitedDiscussions = $discussions->matching($criteria);
+        $queryBuilder = $entityManager->createQueryBuilder();
 
+        $queryBuilder
+            ->select('d')
+            ->from(Discussion::class, 'd')
+            ->where('d.trick = :trick')
+            ->setParameter('trick', $trick)
+            ->orderBy('d.creationDate', 'DESC')
+            ->setMaxResults(4)
+            ->setFirstResult(0);
+
+        $limitedDiscussions = $queryBuilder->getQuery()->getResult();
+        //dd($limitedDiscussions);
         //dd($limitedDiscussions->isEmpty());
 
         $parameters = [
@@ -132,31 +144,6 @@ class TrickController extends AbstractController
 
     }
 
-
-    #[Route('/loadMoreDiscussions', name: 'loadMoreDiscussions', methods: ['GET'])]
-    public function loadDiscussions(Request $request, Trick $trick): JsonResponse
-    {
-        try {
-            $offset = $request->query->getInt('offset', 0);
-            $limit = 4;
-
-            $discussions = $trick->getDiscussions();
-            $slicedDiscussions = $discussions->slice($offset, $limit);
-
-            $jsonData = [];
-            foreach ($slicedDiscussions as $discussion) {
-                $discussionData = [
-                    'idUser' => $discussion->getIduser()->getId(),
-                    'content' => $discussion->getContent()
-                ];
-                $jsonData[] = $discussionData;
-            }
-
-            return $this->json($jsonData);
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 
     #[Route('/{slug}/delete', name: 'app_trick_delete')]
     public function deleteTrick(Trick $trick = null, ManagerRegistry $doctrine): RedirectResponse
@@ -265,14 +252,23 @@ class TrickController extends AbstractController
     public function loadMoreComments(Request $request, Trick $trick): JsonResponse
     {
         $offset = $request->query->getInt('offset', 0);
-        $limit = 4;
+        $limit = 6;
 
-        $comments = $trick->getDiscussions()->slice($offset, $limit);
+        // Create a Criteria to sort discussions by creationDate in descending order
+        $criteria = Criteria::create()->orderBy(['creationDate' => 'DESC'])->setFirstResult($offset)
+            ->setMaxResults($limit);
+        $sortedDiscussions = $trick->getDiscussions()->matching($criteria)->toArray();
+
+        //dd($sortedDiscussions);
+        // Apply offset and limit
+        $comments = array_slice($sortedDiscussions, $offset, $limit);
 
         $jsonData = [];
-        foreach ($comments as $comment) {
+        foreach ($sortedDiscussions as $comment) {
             $commentData = [
                 'id' => $comment->getId(),
+                'nom' => $comment->getIduser()->getName(),
+                'creationDate' => $comment->getCreationDate()->format('d-m-Y'),
                 'content' => $comment->getContent()
             ];
             $jsonData[] = $commentData;
