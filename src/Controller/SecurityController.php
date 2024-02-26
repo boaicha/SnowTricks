@@ -28,7 +28,7 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         $user = $this->getUser();
-        if ($error || ($this->getUser() && !$user->isIsVerified())) {
+        if ($this->getUser() && !$user->isIsVerified()) {
             $this->addFlash('warning', 'Votre compte n\'est pas activé.');
         }
 
