@@ -147,6 +147,8 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_check_email');
         }
 
+        $resetUrl = $this->generateUrl('app_reset_password', ['token' => $resetToken->getToken()], UrlGeneratorInterface::ABSOLUTE_URL);
+
         $sendEmail = new MailerService();
         $emailParametersWithoutToken = [
             'user' => $user,
