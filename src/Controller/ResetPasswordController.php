@@ -16,7 +16,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
@@ -75,7 +74,7 @@ class ResetPasswordController extends AbstractController
     /**
      * Validates and process the reset URL that the user clicked in their email.
      */
-    #[Route('/reset/{token}', name: 'app_reset_password', requirements: ['_port' => '8000'])]
+    #[Route('/reset/{token}', name: 'app_reset_password')]
     public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
     {
         if ($token) {
@@ -150,18 +149,14 @@ class ResetPasswordController extends AbstractController
 
         $resetUrl = $this->generateUrl('app_reset_password', ['token' => $resetToken->getToken()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $email = (new TemplatedEmail())
-            ->from(new Address('aicha.mougni@gmail.com', 'SnowTricks Bot'))
-            ->to($user->getEmail())
-            ->subject('Réinitialisation du mot de passe')
-            ->htmlTemplate('reset_password/email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-                'resetUrl' => $resetUrl
-            ])
-        ;
-
-        $mailer->send($email);
+        $sendEmail = new MailerService();
+        $emailParametersWithoutToken = [
+            'user' => $user,
+            'mailer' => $mailer,
+            'objet' => "Réinitialisation du mot de passe",
+            'template' => 'reset_password/email.html.twig',
+        ];
+        $envoie = $sendEmail->sendEmail($emailParametersWithoutToken);
 
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
