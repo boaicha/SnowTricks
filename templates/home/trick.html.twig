@@ -175,7 +175,8 @@
                                     <img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
                                 </div>
                                 <div class="ms-3">
-                                    <div class="fw-bold">{{ discussion.idUser.name }}</div>
+                                    <div style="font-weight: bold; color: #000;">{{ discussion.idUser.name }}</div>
+                                    <div style="color: #333;">{{ discussion.creationDate|date('d-m-Y') }}</div>
                                     {{ discussion }}
                                 </div>
                             </div>
@@ -219,8 +220,11 @@
                                 </div>
                                 <div class="ms-3">
                                     <div class="fw-bold">
-                                        ${discussion.idUser}
+                                        ${discussion.nom}
+
+
                                     </div>
+<div style="color: #333;">${ discussion.creationDate}</div>
                                     ${discussion.content}
                                 </div>
                             `;
