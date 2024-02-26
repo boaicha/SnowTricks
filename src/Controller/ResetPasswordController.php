@@ -148,7 +148,13 @@ class ResetPasswordController extends AbstractController
         }
 
         $sendEmail = new MailerService();
-        $envoie = $sendEmail->sendEmail($user, $mailer, $resetToken);
+        $emailParametersWithoutToken = [
+            'user' => $user,
+            'mailer' => $mailer,
+            'objet' => "Réinitialisation du mot de passe",
+            'template' => 'reset_password/email.html.twig',
+        ];
+        $envoie = $sendEmail->sendEmail($emailParametersWithoutToken);
 
         // Store the token object in session for retrieval in check-email route.
         if($envoie){
