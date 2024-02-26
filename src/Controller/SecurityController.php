@@ -28,9 +28,8 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         $user = $this->getUser();
-        if ($error || ($this->getUser() && $user->isIsVerified())) {
-            $this->addFlash('error', 'Your account is not verified or there was an authentication error.');
-            return $this->redirectToRoute('app_login'); // Replace 'your_redirect_route' with the route you want to redirect to
+        if ($error || ($this->getUser() && !$user->isIsVerified())) {
+            $this->addFlash('warning', 'Votre compte n\'est pas activé.');
         }
 
         return $this->render('security/login.html.twig', [
