@@ -15,6 +15,7 @@ class MailerService
         $mailer = $emailParameters['mailer'];
         $objet = $emailParameters['objet'];
         $template = $emailParameters['template'];
+        $resetUrl = $emailParameters['resetUrl'];
 
         // Check if resetToken is provided in the array
         $resetToken = $emailParameters['resetToken'] ?? null;
@@ -27,6 +28,7 @@ class MailerService
             ->htmlTemplate($template)
             ->context([
                 'resetToken' => $resetToken,
+                'resetUrl' => $resetUrl
             ])
         ;
 

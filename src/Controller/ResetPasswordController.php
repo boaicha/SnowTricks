@@ -16,6 +16,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
@@ -155,8 +156,9 @@ class ResetPasswordController extends AbstractController
             'mailer' => $mailer,
             'objet' => "Réinitialisation du mot de passe",
             'template' => 'reset_password/email.html.twig',
+            'resetUrl' => $resetUrl
         ];
-        $envoie = $sendEmail->sendEmail($emailParametersWithoutToken);
+        $sendEmail->sendEmail($emailParametersWithoutToken);
 
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
